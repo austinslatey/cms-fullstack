@@ -1,0 +1,53 @@
+header{
+  width: 100%;
+  height: 10rem;
+  background-color: rgb(31 41 55);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+nav {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 60%;
+  font-style: italic;
+  font-size: xx-large;
+  cursor: pointer;
+
+}
+
+.cartimg{
+  height: 30px;
+  width: 30px;
+}
+
+.logo{
+  width: 100%;
+  height: 220px;
+  
+}
+
+a.navbar, .logout{
+ display: inline-block;
+ color: #e1ddcc;
+}
+
+
+/* Media Queries  */
+@media screen and (max-width: 430px) {
+  nav {
+  font-size: small;
+  }
+  .cartimg {
+    height: 15px;
+    width: 15px;
+  }
+  .logo{
+    height: 110px;
+  }
+}
