@@ -175,7 +175,7 @@ export default function Profile() {
           </div>
         </div>
       </div>
-      <SignOutModal showModal={showModal} handleSignOut={confirmEmailChange} />
+      <SignOutModal showModal={showModal} handleSignOut={confirmEmailChange} closeModal={closeModal} />
     </>
   )
 }
