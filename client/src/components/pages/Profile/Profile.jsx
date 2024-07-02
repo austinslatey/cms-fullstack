@@ -1,62 +1,101 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
+import SignOutModal from '../../Modal/SignOutModal';
 
 export default function Profile() {
-  // do stuff
   const { currentUser } = useAppContext();
-  const [userData, setUserData] = useState({})
-  // const {errorUpdateMessage, setErrorUpdateMessage} = useState('');
+  const [userData, setUserData] = useState({});
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSignOut = () => {
+    console.log('Signing out...');
+    // Your sign-out logic goes here
+    setShowModal(false);
+  };
+
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   const [formData, setFormData] = useState({
     loginUsername: userData.username, loginEmail: userData.email,
-  })
+  });
 
   function clearForms() {
-    setFormData({ loginUsername: "", loginEmail: "" })
+    setFormData({ loginUsername: "", loginEmail: "" });
   }
 
   function handleInputChange(event) {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value
-    })
+    });
   }
 
-  console.log(userData._id)
-
   async function handleUsernameUpdate(event) {
-    event.preventDefault()
+    event.preventDefault();
     try {
       const response = await fetch(`/api/users/${userData._id}`, {
         method: 'PUT',
         body: JSON.stringify({
           username: formData.loginUsername,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        window.location.href = "/profile";
+      }
+      clearForms();
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async function handleEmailUpdate(event) {
+    event.preventDefault();
+    openModal();
+  }
+
+  async function confirmEmailChange() {
+    try {
+      const response = await fetch(`/api/users/${userData._id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
           email: formData.loginEmail,
         }),
         headers: {
           'Content-Type': 'application/json'
         }
-      })
-      // console.log(response)
-      const result = await response.json()
+      });
+      const result = await response.json();
       if (result.status === "success") {
-        // setErrorUpdateMessage("Update successful")
-        window.location.href = "/profile"
+        window.location.href = "/login";
       }
-      clearForms()
+      clearForms();
     } catch (err) {
-      console.log(err)
-      // setErrorUpdateMessage("We could not sign you up with the credentials provided")
+      console.log(err);
     }
+    closeModal();
   }
 
   useEffect(() => {
-    currentUser && setUserData(currentUser)
-  }, [currentUser])
+    if (currentUser) {
+      setUserData(currentUser);
+      setFormData({
+        loginUsername: currentUser.username,
+        loginEmail: currentUser.email
+      });
+    }
+  }, [currentUser]);
 
-  useEffect(() => {
-
-  }, [userData])
   return (
     <>
       <div className="profile-header bg-dark text-light text-center min-vh-100">
@@ -106,9 +145,9 @@ export default function Profile() {
                 </form>
                 <form
                   className="mb-3 row"
-                  onSubmit={handleUsernameUpdate}
+                  onSubmit={handleEmailUpdate}
                 >
-                  <label className="col-sm-3 col-form-label text-light">Add Additional Email</label>
+                  <label className="col-sm-3 col-form-label text-light">Change Email</label>
                   <div className="col-sm-7">
                     <input className="form-control"
                       name="loginEmail"
@@ -136,6 +175,7 @@ export default function Profile() {
           </div>
         </div>
       </div>
+      <SignOutModal showModal={showModal} handleSignOut={confirmEmailChange} />
     </>
   )
 }
