@@ -4,6 +4,12 @@ const dateFormat = require('../utils/dateFormat');
 
 const thoughtSchema = new Schema(
   {
+    thoughtTitle: {
+      type: String,
+      required: 'You need to leave a thought title!',
+      minlength: 1,
+      maxlength: 100
+    },
     thoughtText: {
       type: String,
       required: 'You need to leave a thought!',
