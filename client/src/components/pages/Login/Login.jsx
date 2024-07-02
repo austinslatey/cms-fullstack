@@ -4,9 +4,6 @@ import { Link } from "react-router-dom";
 
 
 export default function Login() {
-
-  
-
   const [formData, setFormData] = useState({
     loginUsername: "", loginEmail: "", loginPassword: ""
   })
@@ -29,7 +26,7 @@ export default function Login() {
       const response = await fetch("/api/users/login", {
         method: 'POST',
         body: JSON.stringify({
-          loginUsername: formData.loginPassword,
+          username: formData.loginPassword,
           email: formData.loginEmail,
           password: formData.loginPassword
         }),
