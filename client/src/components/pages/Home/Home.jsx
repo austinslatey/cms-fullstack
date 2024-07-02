@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import ThoughtContainer from "../../Thoughts/ThoughtContainer/ThoughtContainer";
 import ThoughtList from "../../Thoughts/ThoughtList/ThoughtList";
+import LoginBlocker from "../Login/LoginBlocked";
+import { useAppContext } from "../../../providers/AppProvider"
 import "./Home.css";
 
 export default function Home() {
   const [thoughts, setThoughts] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false)
+  const { currentUser } = useAppContext();
 
   useEffect(() => {
     async function fetchThoughts() {
@@ -27,10 +31,25 @@ export default function Home() {
     fetchThoughts();
   }, []);
 
+  useEffect(() => {
+    // console.log(currentUser)
+    currentUser && setLoggedIn(true)
+  }, [currentUser])
+
   return (
     <>
       <div className="bg-secondary">
-        <ThoughtContainer />
+        {/* if else for displaying post creation*/}
+        {(!loggedIn) ? (
+          <>
+            <LoginBlocker />
+          </>
+        ) : (
+          <>
+            <ThoughtContainer />
+          </>
+        )}
+
 
 
         <div className="container">

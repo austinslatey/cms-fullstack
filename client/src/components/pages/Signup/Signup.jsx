@@ -52,7 +52,7 @@ export default function Signup() {
       <div className="container bg-dark my-2 signup">
         <div className="row justify-content-center py-5">
           <div className="col-md-6">
-            <div className="card border-light  text-light text-center">
+            <div className="card border-light text-light text-center">
               <div className="card-body">
                 <h3 className="card-title text-center mb-4">Sign Up</h3>
                 <form onSubmit={handleSignup}>
