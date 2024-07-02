@@ -39,6 +39,9 @@ export default function Signup() {
       // eslint-disable-next-line no-unused-vars
       const result = await response.json()
       clearForms()
+      if (result.status === 'success') {
+        window.location.href = "/";
+      }
     } catch (err) {
       console.log(err)
     }
