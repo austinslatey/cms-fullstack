@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { useAppContext } from "../../../providers/AppProvider";
+import { useAppContext } from "../../providers/AppProvider";
 
 export default function ThoughtContainer() {
   const { currentUser } = useAppContext();
 
   const [userData, setUserData] = useState({});
   const [formData, setFormData] = useState({
-    thoughtTitle: "", thoughtText: ""
+    thoughtTitle: "",
+    thoughtText: ""
   });
 
   function clearForms() {
@@ -27,77 +28,81 @@ export default function ThoughtContainer() {
   }, [currentUser]);
 
   async function handleThoughts(event) {
-    event.preventDefault()
+    event.preventDefault();
     try {
       const response = await fetch("/api/thoughts", {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({
           thoughtTitle: formData.thoughtTitle,
-          text: formData.thoughtText,
+          thoughtText: formData.thoughtText,
           username: userData.username
         }),
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         }
       });
-      const result = await response.json()
-      clearForms()
-      if (result.status === 'success') {
-        // window.location.href = "/";
+      const result = await response.json();
+      clearForms();
+      if (result.status === "success") {
         console.log("Thought created successfully!");
-      }
-      else {
-        // Handle failure (show error message or retry)
+      } else {
         console.error("Failed to create thought:", result.error);
       }
     } catch (err) {
-      console.error("Error creating thought!", err.message)
+      console.error("Error creating thought!", err.message);
     }
   }
 
-
   return (
-    <>
-      <div>
-        <h1>thought container</h1>
-        <form
-          onSubmit={handleThoughts}
-          className="mb-3 row"
-        >
-          <label className="col-sm-3 col-form-label text-light">
-            Change Username
-          </label>
-          <div className="col-sm-7">
-            <input
-              className="form-control"
-              name="thoughtTitle"
-              value={formData.thoughtTitle}
-              type="text"
-              placeholder={`create a post heading`}
-              onChange={handleInputChange}
-            />
+    <div className="border mx-4 mb-2 bg-dark p-2 text-center text-light">
+      <h1>Create a new post {userData.username}!</h1>
+      <form onSubmit={handleThoughts} className="mb-3">
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <div className="mb-3">
+              <label htmlFor="thoughtTitle" className="form-label text-light">
+                Title
+              </label>
+              <input
+                id="thoughtTitle"
+                className="form-control"
+                name="thoughtTitle"
+                value={formData.thoughtTitle}
+                type="text"
+                placeholder="Enter a post title"
+                onChange={handleInputChange}
+                required
+              />
+            </div>
           </div>
-          <div className="col-sm-7">
-            <input
-              className="form-control"
-              name="thoughtText"
-              value={formData.text}
-              type="text"
-              placeholder={`create a post description`}
-              onChange={handleInputChange}
-            />
+        </div>
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <div className="mb-3">
+              <label htmlFor="thoughtText" className="form-label text-light">
+                Description
+              </label>
+              <input
+                id="thoughtText"
+                className="form-control"
+                name="thoughtText"
+                value={formData.thoughtText}
+                type="text"
+                placeholder="Enter a post description"
+                onChange={handleInputChange}
+                required
+              />
+            </div>
           </div>
-          <p>{userData.username}</p>
-          <button
-            type="submit"
-            className="btn btn-secondary mt-2">
-            Create
-          </button>
-
-        </form>
-      </div>
-    </>
+        </div>
+        <div className="row justify-content-center">
+          <div className="col-md-6">
+            <button type="submit" className="btn btn-secondary mt-2">
+              Create
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 }
-
-

@@ -1,4 +1,4 @@
-import React from "react"
+import ThoughtContainer from "../../ThoughtContainer/ThoughtContainer"
 import "./Home.css"
 
 export default function Home() {
@@ -6,7 +6,10 @@ export default function Home() {
   return (
     <>
       <div className="bg-secondary">
-        <h1 className="text-center text-light">home</h1>
+        <div className="bg-secondary">
+        <ThoughtContainer />
+        </div>
+        
         <div className="container">
           {/* display feed here -- eventually map the data*/}
           <div className="card text-center bg-dark text-light my-2">
