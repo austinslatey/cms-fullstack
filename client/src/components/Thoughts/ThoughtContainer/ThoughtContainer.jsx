@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAppContext } from "../../providers/AppProvider";
+import { useAppContext } from "../../../providers/AppProvider";
 
 export default function ThoughtContainer() {
   const { currentUser } = useAppContext();

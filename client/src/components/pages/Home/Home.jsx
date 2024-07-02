@@ -1,45 +1,42 @@
-import ThoughtContainer from "../../ThoughtContainer/ThoughtContainer"
-import "./Home.css"
+import { useEffect, useState } from "react";
+import ThoughtContainer from "../../Thoughts/ThoughtContainer/ThoughtContainer";
+import ThoughtList from "../../Thoughts/ThoughtList/ThoughtList";
+import "./Home.css";
 
 export default function Home() {
+  const [thoughts, setThoughts] = useState([]);
+
+  useEffect(() => {
+    async function fetchThoughts() {
+      try {
+        const response = await fetch("http://localhost:3001/api/thoughts");
+        if (!response.ok) {
+          throw new Error("Failed to fetch thoughts.");
+        }
+        const data = await response.json();
+        if (data.status === "success") {
+          setThoughts(data.payload);
+        } else {
+          throw new Error("Failed to fetch thoughts.");
+        }
+      } catch (error) {
+        console.error("Error fetching thoughts:", error);
+      }
+    }
+
+    fetchThoughts();
+  }, []);
 
   return (
     <>
       <div className="bg-secondary">
-        <div className="bg-secondary">
         <ThoughtContainer />
-        </div>
-        
+
+
         <div className="container">
-          {/* display feed here -- eventually map the data*/}
-          <div className="card text-center bg-dark text-light my-2">
-            <h1 className="border border-secondary m-2 rounded">article name</h1>
-            <p className="border border-secondary m-2 rounded">article text</p>
-            <a href="">View author</a>
-            <div className="d-flex justify-content-center my-2">
-              <button className="btn btn-primary mx-2">comment</button>
-              <button className="btn btn-primary mx-2">like this</button>
-            </div>
-          </div>
-          <div className="card text-center bg-dark text-light my-2">
-            <h1 className="border border-secondary m-2 rounded">article name</h1>
-            <p className="border border-secondary m-2 rounded">article text</p>
-            <a href="">View author</a>
-            <div className="d-flex justify-content-center my-2">
-              <button className="btn btn-primary mx-2">comment</button>
-              <button className="btn btn-primary mx-2">like this</button>
-            </div>
-          </div>
-          <div className="card text-center bg-dark text-light my-2">
-            <h1 className="border border-secondary m-2 rounded">article name</h1>
-            <p className="border border-secondary m-2 rounded">article text</p>
-            <a href="">View author</a>
-            <div className="d-flex justify-content-center my-2">
-              <button className="btn btn-primary mx-2">comment</button>
-              <button className="btn btn-primary mx-2">like this</button>
-            </div>
-          </div>  
+          <ThoughtList thoughts={thoughts} />
         </div>
+
       </div>
     </>
   )
