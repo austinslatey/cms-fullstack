@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
 import UpdatePostModal from "../../Modal/UpdatePostModal";
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   const { currentUser } = useAppContext();
@@ -17,10 +18,22 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
           <p className="text-left">{thought.username} posted</p>
         </div>
         {currentUser.username !== thought.username && (
-          <div className="col-md-6 d-flex">
-            <button className="btn btn-primary mx-2">View Profile</button>
-            <button className="btn btn-primary mx-2">Add Friend</button>
+          <div className="col-md-6 d-flex justify-content-end">
+            <DropdownButton id="dropdown-basic-button" title="Options" variant="dark">
+              <Dropdown.Item href="#/action-1">View Profile</Dropdown.Item>
+              <Dropdown.Item href="#/action-2">Add Friend</Dropdown.Item>
+            </DropdownButton>
           </div>
+        )}
+        {currentUser && currentUser.username === thought.username && (
+          <>
+          <div className="col-md-6 d-flex justify-content-end ">
+            <DropdownButton id="dropdown-basic-button"  title="Options" variant="dark">
+              <Dropdown.Item className="btn btn-warning p-2 text-center bg-warning" onClick={() => setShowUpdateModal(true)}>Update</Dropdown.Item>
+              <Dropdown.Item className="btn btn-danger p-2 text-center bg-danger" onClick={() => onDelete(thought._id)}>Delete</Dropdown.Item>
+            </DropdownButton>
+            </div>
+          </>
         )}
       </div>
 
@@ -30,12 +43,7 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
       <div className="d-flex justify-content-center my-2">
         <button className="btn btn-primary m-2">Comment</button>
         <button className="btn btn-primary m-2">Like this</button>
-        {currentUser && currentUser.username === thought.username && (
-          <>
-            <button className="btn btn-warning m-2" onClick={() => setShowUpdateModal(true)}>Update</button>
-            <button className="btn btn-danger m-2" onClick={() => onDelete(thought._id)}>Delete</button>
-          </>
-        )}
+
       </div>
       <UpdatePostModal
         show={showUpdateModal}
