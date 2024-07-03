@@ -2,54 +2,61 @@ const { Thought } = require("../models")
 
 module.exports = {
 
-  getAll: async function(){
+  getAll: async function () {
     try {
       return await Thought.find({})
-    } catch(err){
+    } catch (err) {
       throw new Error(err.message)
     }
   },
 
-  getOne: async function(criteriaObj){
+  getOne: async function (criteriaObj) {
     try {
       return await Thought.findOne(criteriaObj)
-    } catch(err){
+    } catch (err) {
       throw new Error(err.message)
     }
   },
 
-  getById: async function(id){
+  getById: async function (id) {
     try {
       return await Thought.findById(id)
-    } catch(err){
+    } catch (err) {
       throw new Error(err.message)
     }
   },
+  getByUsername: async function (username) {
+    try {
+      return await Thought.find({ username: username });
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  },
 
-  create: async function(data){
+  create: async function (data) {
     try {
       return await Thought.create(data)
-    } catch(err){
+    } catch (err) {
       throw new Error(err.message)
     }
   },
 
-  updateById: async function(id, data){
+  updateById: async function (id, data) {
     try {
       return await Thought.findByIdAndUpdate(
-        id, 
-        data, 
+        id,
+        data,
         { new: true }
       )
-    } catch(err){
+    } catch (err) {
       throw new Error(err.message)
     }
   },
 
-  deleteById: async function(id){
+  deleteById: async function (id) {
     try {
       return await Thought.findByIdAndDelete(id)
-    } catch(err){
+    } catch (err) {
       throw new Error(err.message)
     }
   }
