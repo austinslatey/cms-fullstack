@@ -12,7 +12,18 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
 
   return (
     <div className="card bg-dark text-light my-2">
-      <p className="text-left m-2 px-4 py-4">{thought.username} posted</p>
+      <div className="row m-2 px-4 py-4 align-items-center">
+        <div className="col-md-6">
+          <p className="text-left">{thought.username} posted</p>
+        </div>
+        {currentUser.username !== thought.username && (
+          <div className="col-md-6 d-flex">
+            <button className="btn btn-primary mx-2">View Profile</button>
+            <button className="btn btn-primary mx-2">Add Friend</button>
+          </div>
+        )}
+      </div>
+
       <h1 className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtTitle}</h1>
       <p className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtText}</p>
       <p className="text-light text-center m-4">{thought.createdAt}</p>
