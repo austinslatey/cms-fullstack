@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
 import UpdatePostModal from "../../Modal/UpdatePostModal";
@@ -7,8 +8,14 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   const { currentUser } = useAppContext();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
+  const navigate = useNavigate();
+
   const handleUpdate = (newTitle, newText) => {
     onUpdate(thought._id, newTitle, newText);
+  };
+
+  const viewProfile = () => {
+    navigate(`/profile/${thought.username}`);
   };
 
   return (
@@ -20,7 +27,7 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
         {currentUser.username !== thought.username && (
           <div className="col-md-6 d-flex justify-content-end">
             <DropdownButton id="dropdown-basic-button" title="Options" variant="dark">
-              <Dropdown.Item href="#/action-1">View Profile</Dropdown.Item>
+              <Dropdown.Item onClick={viewProfile}>View Profile</Dropdown.Item>
               <Dropdown.Item href="#/action-2">Add Friend</Dropdown.Item>
             </DropdownButton>
           </div>

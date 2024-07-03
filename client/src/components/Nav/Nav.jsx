@@ -49,7 +49,7 @@ export default function Nav() {
       ) : (
         <>
           {/* Profile tab */}
-          <NavLink className="navbar" to="/profile" style={({ isActive }) =>
+          <NavLink className="navbar" to="/usersettings" style={({ isActive }) =>
           ({ textDecoration: isActive ? 'underline' : 'none' }
           )}>Your Account</NavLink>
           {/* Logout button */}

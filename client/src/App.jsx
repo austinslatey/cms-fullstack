@@ -2,6 +2,7 @@ import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Home from "./components/pages/Home/Home"
 import About from "./components/pages/About/About"
+import UserSettings from "./components/pages/UserSettings/UserSettings"
 import Profile from "./components/pages/Profile/Profile"
 import Signup from "./components/pages/Signup/Signup"
 import Login from "./components/pages/Login/Login"
@@ -22,7 +23,8 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/usersettings" element={<UserSettings />} />
+          <Route path="/profile/:username" element={<Profile />} />
         </Routes>
         <Footer />
       </BrowserRouter>
