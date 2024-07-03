@@ -3,14 +3,13 @@ import { useAppContext } from "../../../providers/AppProvider";
 import ThoughtList from "../../Thoughts/ThoughtList/ThoughtList";
 import "./About.css";
 
-
 export default function About() {
   const { currentUser } = useAppContext();
   const [userPosts, setUserPosts] = useState([]);
 
   useEffect(() => {
     async function fetchUserPosts() {
-      if (currentUser && currentUser.username) {
+      if (currentUser && currentUser._id) {
         try {
           const response = await fetch(`/api/thoughts?username=${currentUser.username}`);
           const data = await response.json();
@@ -26,11 +25,51 @@ export default function About() {
     fetchUserPosts();
   }, [currentUser]);
 
+  const handleUpdate = async (id, newTitle, newText) => {
+    try {
+      const response = await fetch(`/api/thoughts/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: currentUser.username,
+          thoughtTitle: newTitle,
+          thoughtText: newText,
+        }),
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        setUserPosts(userPosts.map(post => post._id === id ? data.payload : post));
+      }
+    } catch (error) {
+      console.error("Error updating post:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`/api/thoughts/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: currentUser.username }),
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        setUserPosts(userPosts.filter(post => post._id !== id));
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
   return (
     <div className="about-page">
       <h1>About {currentUser?.username}</h1>
       {userPosts.length > 0 ? (
-        <ThoughtList thoughts={userPosts} />
+        <ThoughtList thoughts={userPosts} onUpdate={handleUpdate} onDelete={handleDelete} />
       ) : (
         <p>No posts available.</p>
       )}

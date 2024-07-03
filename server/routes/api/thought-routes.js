@@ -40,19 +40,29 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const payload = await updateById(req.params.id, req.body)
-    res.status(200).json({ status: 'success', payload: payload })
+    const thought = await Thought.findById(req.params.id);
+    if (thought.username !== req.body.username) {
+      return res.status(403).json({ status: 'error', msg: 'You can only update your own thoughts.' });
+    }
+
+    const payload = await updateById(req.params.id, req.body);
+    res.status(200).json({ status: 'success', payload: payload });
   } catch (err) {
-    res.status(500).json({ status: 'error', msg: err.message })
+    res.status(500).json({ status: 'error', msg: err.message });
   }
 });
 
 router.delete("/:id", async (req, res) => {
   try {
-    const payload = await deleteById(req.params.id)
-    res.status(200).json({ status: 'success', payload: payload })
+    const thought = await Thought.findById(req.params.id);
+    if (thought.username !== req.body.username) {
+      return res.status(403).json({ status: 'error', msg: 'You can only delete your own thoughts.' });
+    }
+
+    const payload = await deleteById(req.params.id);
+    res.status(200).json({ status: 'success', payload: payload });
   } catch (err) {
-    res.status(500).json({ status: 'error', msg: err.message })
+    res.status(500).json({ status: 'error', msg: err.message });
   }
 });
 
