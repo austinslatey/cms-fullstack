@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ThoughtContainer from "../../Thoughts/ThoughtContainer/ThoughtContainer";
+import CreateThought from "../../Thoughts/CreateThought/CreateThought";
 import ThoughtList from "../../Thoughts/ThoughtList/ThoughtList";
 import LoginBlocker from "../Login/LoginBlocked";
 import { useAppContext } from "../../../providers/AppProvider"
@@ -80,7 +80,7 @@ export default function Home() {
       {!loggedIn ? (
         <LoginBlocker />
       ) : (
-        <ThoughtContainer />
+        <CreateThought />
       )}
       <div className="container">
         <ThoughtList thoughts={thoughts} onUpdate={handleUpdate} onDelete={handleDelete} />

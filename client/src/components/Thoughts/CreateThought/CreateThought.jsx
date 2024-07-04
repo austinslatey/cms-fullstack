@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
 
-export default function ThoughtContainer() {
+export default function CreateThought() {
   const { currentUser } = useAppContext();
 
   const [userData, setUserData] = useState({});

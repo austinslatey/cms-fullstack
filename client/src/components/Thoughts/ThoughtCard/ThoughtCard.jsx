@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
 import UpdatePostModal from "../../Modal/UpdatePostModal";
@@ -8,14 +7,13 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   const { currentUser } = useAppContext();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  const navigate = useNavigate();
 
   const handleUpdate = (newTitle, newText) => {
     onUpdate(thought._id, newTitle, newText);
   };
 
   const viewProfile = () => {
-    navigate(`/profile/${thought.username}`);
+    window.location.href = `/profile/${thought.username}`;
   };
 
   return (
