@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { getAll, getOne, getById, create, updateById, deleteById } = require("../../controllers/user-controller");
+const { getAll, getOne, getById, create, updateById, deleteById, addFriend } = require("../../controllers/user-controller");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -111,6 +111,24 @@ router.delete("/:id", async (req, res) => {
     return res.status(200).json({ status: 'success', payload: payload });
   } catch (err) {
     return res.status(500).json({ status: 'error', msg: err.message });
+  }
+});
+
+// Add Friend
+router.post('/:id/friends', async (req, res) => {
+  const { id } = req.params;
+  const { friendId } = req.body;
+
+  try {
+    const result = await addFriend(id, friendId);
+    if (result.status === 'success') {
+      return res.status(200).json(result);
+    } else {
+      return res.status(400).json(result);
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: 'error', message: 'Server error' });
   }
 });
 

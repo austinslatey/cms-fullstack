@@ -8,6 +8,11 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
 
+  if (!thought || !currentUser) {
+    // Or render a loading indicator/spinner
+    return null; 
+  }
+
   const handleUpdate = (newTitle, newText) => {
     onUpdate(thought._id, newTitle, newText);
   };
