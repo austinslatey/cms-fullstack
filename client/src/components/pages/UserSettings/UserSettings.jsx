@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
 import SignOutModal from '../../Modal/SignOutModal';
+import DeleteAccountModal from "../../Modal/DeleteAccountModal";
 
 export default function UserSettings() {
   const { currentUser } = useAppContext();
   const [userData, setUserData] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleSignOut = () => {
     console.log('Signing out...');
@@ -13,17 +15,41 @@ export default function UserSettings() {
     setShowModal(false);
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await fetch(`/api/users/${userData._id}`, {
+        method: 'DELETE',
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        // Redirect or perform any cleanup actions after deletion
+        window.location.href = "/";
+      }
+    } catch (err) {
+      console.error('Error deleting account:', err);
+    }
+    setShowDeleteModal(false);
+  };
 
   const openModal = () => {
     setShowModal(true);
+  };
+
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
   };
 
   const closeModal = () => {
     setShowModal(false);
   };
 
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+  };
+
   const [formData, setFormData] = useState({
-    loginUsername: userData.username, loginEmail: userData.email,
+    loginUsername: "",
+    loginEmail: ""
   });
 
   function clearForms() {
@@ -64,6 +90,11 @@ export default function UserSettings() {
     openModal();
   }
 
+  async function handleDeleteA(event) {
+    event.preventDefault();
+    openDeleteModal();
+  }
+
   async function confirmEmailChange() {
     try {
       const response = await fetch(`/api/users/${userData._id}`, {
@@ -85,22 +116,6 @@ export default function UserSettings() {
     }
     closeModal();
   }
-
-  const deleteAccount = async () => {
-    try {
-      const response = await fetch(`/api/users/${userData._id}`, {
-        method: 'DELETE',
-      });
-      const result = await response.json();
-      if (result.status === "success") {
-        // Redirect or perform any cleanup actions after deletion
-        window.location.href = "/goodbye"; // Example redirect
-      }
-    } catch (err) {
-      console.error('Error deleting account:', err);
-    }
-  }
-
 
   useEffect(() => {
     if (currentUser) {
@@ -136,10 +151,7 @@ export default function UserSettings() {
                 <h2 className="text-light">Profile Settings</h2>
 
                 {/* Profile settings content */}
-                <form
-                  className="mb-3 row"
-                  onSubmit={handleUsernameUpdate}
-                >
+                <form className="mb-3 row" onSubmit={handleUsernameUpdate}>
                   <label className="col-sm-3 col-form-label text-light">
                     Change Username
                   </label>
@@ -159,18 +171,17 @@ export default function UserSettings() {
                     </button>
                   </div>
                 </form>
-                <form
-                  className="mb-3 row"
-                  onSubmit={handleEmailUpdate}
-                >
+                <form className="mb-3 row" onSubmit={handleEmailUpdate}>
                   <label className="col-sm-3 col-form-label text-light">Change Email</label>
                   <div className="col-sm-7">
-                    <input className="form-control"
+                    <input
+                      className="form-control"
                       name="loginEmail"
                       value={formData.loginEmail}
                       type="text"
                       placeholder={`change ${userData.email}`}
-                      onChange={handleInputChange} />
+                      onChange={handleInputChange}
+                    />
                     <button
                       className="btn btn-secondary mt-2"
                       type="submit"
@@ -187,18 +198,19 @@ export default function UserSettings() {
                   </div>
                 </div>
                 <div className="mb-3 row">
-                  <div className="col-sm-10">
-                    <button className="btn btn-danger" onClick={deleteAccount}>
+                  <div className="mx-2 col-sm-12">
+                    <button className="btn btn-danger" onClick={handleDeleteA}>
                       Delete Account
                     </button>
                   </div>
                 </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div >
+      <DeleteAccountModal showDeleteModal={showDeleteModal} handleDeleteAccount={handleDeleteAccount} closeModal={closeDeleteModal} />
       <SignOutModal showModal={showModal} handleSignOut={confirmEmailChange} closeModal={closeModal} />
     </>
-  )
+  );
 }

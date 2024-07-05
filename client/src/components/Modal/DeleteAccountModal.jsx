@@ -1,12 +1,11 @@
 import { Modal, Button } from 'react-bootstrap';
 
-export default function SignOutModal({ showModal, handleSignOut, closeModal }) {
+export default function DeleteAccountModal({ showDeleteModal, handleDeleteAccount, closeModal }) {
 
   return (
-    <Modal show={showModal} onHide={closeModal}>
+    <Modal show={showDeleteModal} onHide={closeModal}>
       <Modal.Header closeButton>
-        <Modal.Title>Sign Out</Modal.Title>
-
+        <Modal.Title>Delete Account</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -25,23 +24,21 @@ export default function SignOutModal({ showModal, handleSignOut, closeModal }) {
           />
         </svg>
         <div className='display-6 text-center'>
-        Changing an email will sign you out.
+          This will remove your account permanently
         </div>
         <div className='display-6 text-center'>
-        Are you sure you want continue?
+          Are you sure you want to continue?
         </div>
-        
-        </Modal.Body>
+      </Modal.Body>
+
       <Modal.Footer>
         <Button variant="secondary" onClick={closeModal}>
           Cancel
         </Button>
-        <Button variant="success" onClick={handleSignOut}>
-          Confirm
+        <Button variant="danger" onClick={handleDeleteAccount}>
+          Delete Account
         </Button>
       </Modal.Footer>
     </Modal>
   );
 }
-
-
