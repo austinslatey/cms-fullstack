@@ -1,129 +1,16 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
-import SignOutModal from '../../Modal/SignOutModal';
-import DeleteAccountModal from "../../Modal/DeleteAccountModal";
+import ChangeUsername from "../../Settings/Username/Username";
+import ChangeEmail from "../../Settings/Email/Email";
+import DeleteAccount from "../../Settings/DeleteAccount/DeleteAccount";
 
 export default function UserSettings() {
   const { currentUser } = useAppContext();
   const [userData, setUserData] = useState({});
-  const [showModal, setShowModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  const handleSignOut = () => {
-    console.log('Signing out...');
-    // Your sign-out logic goes here
-    setShowModal(false);
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      const response = await fetch(`/api/users/${userData._id}`, {
-        method: 'DELETE',
-      });
-      const result = await response.json();
-      if (result.status === "success") {
-        // Redirect or perform any cleanup actions after deletion
-        window.location.href = "/";
-      }
-    } catch (err) {
-      console.error('Error deleting account:', err);
-    }
-    setShowDeleteModal(false);
-  };
-
-  const openModal = () => {
-    setShowModal(true);
-  };
-
-  const openDeleteModal = () => {
-    setShowDeleteModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
-  const closeDeleteModal = () => {
-    setShowDeleteModal(false);
-  };
-
-  const [formData, setFormData] = useState({
-    loginUsername: "",
-    loginEmail: ""
-  });
-
-  function clearForms() {
-    setFormData({ loginUsername: "", loginEmail: "" });
-  }
-
-  function handleInputChange(event) {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value
-    });
-  }
-
-  async function handleUsernameUpdate(event) {
-    event.preventDefault();
-    try {
-      const response = await fetch(`/api/users/${userData._id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          username: formData.loginUsername,
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      const result = await response.json();
-      if (result.status === "success") {
-        window.location.href = "/usersettings";
-      }
-      clearForms();
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async function handleEmailUpdate(event) {
-    event.preventDefault();
-    openModal();
-  }
-
-  async function handleDeleteA(event) {
-    event.preventDefault();
-    openDeleteModal();
-  }
-
-  async function confirmEmailChange() {
-    try {
-      const response = await fetch(`/api/users/${userData._id}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          email: formData.loginEmail,
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      const result = await response.json();
-      if (result.status === "success") {
-        window.location.href = "/login";
-      }
-      clearForms();
-    } catch (err) {
-      console.log(err);
-    }
-    closeModal();
-  }
 
   useEffect(() => {
     if (currentUser) {
       setUserData(currentUser);
-      setFormData({
-        loginUsername: currentUser.username,
-        loginEmail: currentUser.email
-      });
     }
   }, [currentUser]);
 
@@ -151,45 +38,8 @@ export default function UserSettings() {
                 <h2 className="text-light">Profile Settings</h2>
 
                 {/* Profile settings content */}
-                <form className="mb-3 row" onSubmit={handleUsernameUpdate}>
-                  <label className="col-sm-3 col-form-label text-light">
-                    Change Username
-                  </label>
-                  <div className="col-sm-7">
-                    <input
-                      className="form-control"
-                      name="loginUsername"
-                      value={formData.loginUsername}
-                      type="text"
-                      placeholder={`change ${userData.username}`}
-                      onChange={handleInputChange}
-                    />
-                    <button
-                      type="submit"
-                      className="btn btn-secondary mt-2">
-                      Send
-                    </button>
-                  </div>
-                </form>
-                <form className="mb-3 row" onSubmit={handleEmailUpdate}>
-                  <label className="col-sm-3 col-form-label text-light">Change Email</label>
-                  <div className="col-sm-7">
-                    <input
-                      className="form-control"
-                      name="loginEmail"
-                      value={formData.loginEmail}
-                      type="text"
-                      placeholder={`change ${userData.email}`}
-                      onChange={handleInputChange}
-                    />
-                    <button
-                      className="btn btn-secondary mt-2"
-                      type="submit"
-                    >
-                      Send
-                    </button>
-                  </div>
-                </form>
+                <ChangeUsername />
+                <ChangeEmail />
                 <div className="mb-3 row">
                   <label className="col-sm-3 col-form-label text-light">Change Bio</label>
                   <div className="col-sm-7">
@@ -197,20 +47,15 @@ export default function UserSettings() {
                     <button className="btn btn-secondary mt-2">Send</button>
                   </div>
                 </div>
-                <div className="mb-3 row">
-                  <div className="mx-2 col-sm-12">
-                    <button className="btn btn-danger" onClick={handleDeleteA}>
-                      Delete Account
-                    </button>
-                  </div>
-                </div>
+                <DeleteAccount />
+
               </div>
             </div>
           </div>
         </div>
       </div>
-      <DeleteAccountModal showDeleteModal={showDeleteModal} handleDeleteAccount={handleDeleteAccount} closeModal={closeDeleteModal} />
-      <SignOutModal showModal={showModal} handleSignOut={confirmEmailChange} closeModal={closeModal} />
+
+
     </>
   );
 }
