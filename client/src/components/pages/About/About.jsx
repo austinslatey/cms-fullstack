@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
 import ThoughtList from "../../Thoughts/ThoughtList/ThoughtList";
+import ProfileHeader from "../../ProfileHeader/ProfileHeader";
 import "./About.css";
 
 export default function About() {
@@ -40,7 +41,7 @@ export default function About() {
       });
       const data = await response.json();
       if (data.status === "success") {
-        setUserPosts(userPosts.map(post => post._id === id ? data.payload : post));
+        setUserPosts(userPosts.map((post) => (post._id === id ? data.payload : post)));
       }
     } catch (error) {
       console.error("Error updating post:", error);
@@ -58,7 +59,7 @@ export default function About() {
       });
       const data = await response.json();
       if (data.status === "success") {
-        setUserPosts(userPosts.filter(post => post._id !== id));
+        setUserPosts(userPosts.filter((post) => post._id !== id));
       }
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -66,13 +67,15 @@ export default function About() {
   };
 
   return (
-    <div className="about-page">
-      <h1>About {currentUser?.username}</h1>
-      {userPosts.length > 0 ? (
-        <ThoughtList thoughts={userPosts} onUpdate={handleUpdate} onDelete={handleDelete} />
-      ) : (
-        <p>No posts available.</p>
-      )}
+    <div className="about-page border-top">
+      <ProfileHeader />
+      <div className="container">
+        {userPosts.length > 0 ? (
+          <ThoughtList thoughts={userPosts} onUpdate={handleUpdate} onDelete={handleDelete} />
+        ) : (
+          <p className="text-center mt-3">No posts available.</p>
+        )}
+      </div>
     </div>
   );
 }

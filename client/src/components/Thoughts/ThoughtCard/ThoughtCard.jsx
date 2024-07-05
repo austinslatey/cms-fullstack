@@ -44,7 +44,7 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   };
 
   return (
-    <div className="card bg-dark text-light my-2">
+    <div className="card bg-dark text-light my-2 container">
       <div className="row m-2 px-4 py-4 align-items-center">
         <div className="col-md-6">
           <p className="text-left">{thought.username} posted</p>
