@@ -4,37 +4,40 @@ import Cookies from 'js-cookie';
 const AppContext = createContext({});
 export const useAppContext = () => useContext(AppContext);
 
-// Verifying Users by Session Storage For the Shopping Cart
 export function AppProvider(props) {
-  const [currentUser, setCurrentUser] = useState()
+  const [currentUser, setCurrentUser] = useState(null);
+
   async function verifyUser() {
-    const foundCookie = Cookies.get('auth-cookie')
-    // console.log(foundCookie)
+    const foundCookie = Cookies.get('auth-cookie');
+    console.log('Found cookie:', foundCookie);
+
     if (foundCookie) {
-      const response = await fetch('/api/users/verify')
-      // console.log(response)
+      const response = await fetch('/api/users/verify');
+      console.log('Response status:', response.status);
+
       if (!response.ok) {
-        return setCurrentUser(null)
+        console.error('Error verifying user:', response.statusText);
+        return setCurrentUser(null);
       }
-      const foundUser = await response.json()
-      console.log(foundUser)
-      setCurrentUser(foundUser.payload)
+
+      const foundUser = await response.json();
+      console.log('Found user:', foundUser);
+
+      setCurrentUser(foundUser.payload);
     }
   }
 
+  useEffect(() => {
+    verifyUser();
+  }, []);
 
   useEffect(() => {
-    verifyUser()
-  }, [])
-
-  useEffect(() => {
-    console.log(currentUser)
-  }, [currentUser])
-
+    console.log('Current user:', currentUser);
+  }, [currentUser]);
 
   return (
-    <AppContext.Provider value={{ currentUser}}>
+    <AppContext.Provider value={{ currentUser }}>
       {props.children}
     </AppContext.Provider>
-  )
+  );
 }

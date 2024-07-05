@@ -10,7 +10,7 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
 
   if (!thought || !currentUser) {
     // Or render a loading indicator/spinner
-    return null; 
+    return null;
   }
 
   const handleUpdate = (newTitle, newText) => {
@@ -19,6 +19,28 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
 
   const viewProfile = () => {
     window.location.href = `/profile/${thought.username}`;
+  };
+
+  const followUser = async () => {
+    try {
+      const response = await fetch(`/api/users/${currentUser._id}/follow`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ followId: thought.userId }), // Assuming thought has a userId field
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        alert('Friend added successfully');
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error adding friend:', error);
+    }
   };
 
   return (
@@ -31,17 +53,17 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
           <div className="col-md-6 d-flex justify-content-end">
             <DropdownButton id="dropdown-basic-button" title="Options" variant="dark">
               <Dropdown.Item onClick={viewProfile}>View Profile</Dropdown.Item>
-              <Dropdown.Item href="#/action-2">Add Friend</Dropdown.Item>
+              <Dropdown.Item onClick={followUser}>Follow {thought.username}</Dropdown.Item>
             </DropdownButton>
           </div>
         )}
         {currentUser && currentUser.username === thought.username && (
           <>
-          <div className="col-md-6 d-flex justify-content-end ">
-            <DropdownButton id="dropdown-basic-button"  title="Options" variant="dark">
-              <Dropdown.Item className="btn btn-warning p-2 text-center bg-warning" onClick={() => setShowUpdateModal(true)}>Update</Dropdown.Item>
-              <Dropdown.Item className="btn btn-danger p-2 text-center bg-danger" onClick={() => onDelete(thought._id)}>Delete</Dropdown.Item>
-            </DropdownButton>
+            <div className="col-md-6 d-flex justify-content-end ">
+              <DropdownButton id="dropdown-basic-button" title="Options" variant="dark">
+                <Dropdown.Item className="btn btn-warning p-2 text-center bg-warning" onClick={() => setShowUpdateModal(true)}>Update</Dropdown.Item>
+                <Dropdown.Item className="btn btn-danger p-2 text-center bg-danger" onClick={() => onDelete(thought._id)}>Delete</Dropdown.Item>
+              </DropdownButton>
             </div>
           </>
         )}

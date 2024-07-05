@@ -11,6 +11,11 @@ const app = express();
 
 app.use(cors());
 app.use(cookieParser());
+
+app.use((req, res, next) => {
+  console.log('Middleware received cookie:', req.cookies['auth-cookie']);
+  next();
+});
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -20,10 +25,10 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, "..", 'client/dist')));
 
   app.get('*', (req, res) => {
-    res.sendFile(path.join( __dirname, "..", 'client/dist/index.html'));
+    res.sendFile(path.join(__dirname, "..", 'client/dist/index.html'));
   });
 }
 
 db.once('open', () => {
-  app.listen(PORT, () => console.log(`API server running on port ${PORT}!`) );
+  app.listen(PORT, () => console.log(`API server running on port ${PORT}!`));
 });

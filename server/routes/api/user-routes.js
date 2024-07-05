@@ -1,14 +1,16 @@
 const router = require("express").Router();
-const { getAll, getOne, getById, create, updateById, deleteById, followUser, unfollowUser } = require("../../controllers/user-controller");
+const { getAll, getOne, getById, create, updateById, deleteById, followUser } = require("../../controllers/user-controller");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 async function createToken(user) {
   const tokenData = { email: user.email }
-  const token = await jwt.sign(tokenData, process.env.TOKEN_ENCRYPT_KEY)
+  const token = jwt.sign(tokenData, process.env.TOKEN_ENCRYPT_KEY)
   return token
 }
+
+
 
 router.get("/", async (req, res) => {
   try {
@@ -49,27 +51,37 @@ router.post("/login", async (req, res) => {
     .json({ status: 'success', payload: user });
 });
 
+
 router.get("/verify", async (req, res) => {
   const cookie = req.cookies['auth-cookie'];
 
+  console.log('Received cookie:', cookie);
+
   if (!cookie) {
-    return res.status(500).json({ status: 'error', msg: 'Could not authenticate user' });
+    return res.status(401).json({ status: 'error', msg: 'No cookie found' });
   }
 
   try {
     const decryptedCookie = jwt.verify(cookie, process.env.TOKEN_ENCRYPT_KEY);
+    console.log('Decrypted cookie:', decryptedCookie);
     const user = await getOne({ email: decryptedCookie.email });
 
     if (!user) {
-      return res.status(500).json({ status: 'error', msg: 'Could not authenticate user' });
+      return res.status(404).json({ status: 'error', msg: 'User not found' });
     }
 
     return res.status(200).json({ status: 'success', payload: user });
   } catch (err) {
-    return res.status(500).json({ status: 'error', msg: err.message });
+    console.error('Error verifying user:', err.message);
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ status: 'error', msg: 'Token expired' });
+    }
+    if (err.name === 'JsonWebTokenError') {
+      return res.status(401).json({ status: 'error', msg: 'Invalid token' });
+    }
+    return res.status(500).json({ status: 'error', msg: 'Could not authenticate user' });
   }
 });
-
 router.post("/", async (req, res) => {
   try {
     const payload = await create(req.body);
@@ -114,29 +126,20 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// Follow a user
-router.post('/:id/follow', async (req, res) => {
-  const { id } = req.params;
-  const { followId } = req.body;
+
+// user-routes.js
+router.post('/:username/follow', async (req, res) => {
+  const { followUsername } = req.body;
+  const { username } = req.params;
 
   try {
-    const result = await followUser(id, followId);
-    res.status(200).json(result);
+    const result = await followUser(username, followUsername);
+    if (result.status === 'error') {
+      return res.status(404).json(result);
+    }
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
-  }
-});
-
-// Unfollow a user
-router.post('/:id/unfollow', async (req, res) => {
-  const { id } = req.params;
-  const { unfollowId } = req.body;
-
-  try {
-    const result = await unfollowUser(id, unfollowId);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
+    return res.status(500).json({ status: 'error', message: 'Internal server error' });
   }
 });
 

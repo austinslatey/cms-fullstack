@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
 import SignOutModal from '../../Modal/SignOutModal';
 
-export default function Profile() {
+export default function UserSettings() {
   const { currentUser } = useAppContext();
   const [userData, setUserData] = useState({});
   const [showModal, setShowModal] = useState(false);
@@ -51,7 +51,7 @@ export default function Profile() {
       });
       const result = await response.json();
       if (result.status === "success") {
-        window.location.href = "/profile";
+        window.location.href = "/usersettings";
       }
       clearForms();
     } catch (err) {
@@ -85,6 +85,22 @@ export default function Profile() {
     }
     closeModal();
   }
+
+  const deleteAccount = async () => {
+    try {
+      const response = await fetch(`/api/users/${userData._id}`, {
+        method: 'DELETE',
+      });
+      const result = await response.json();
+      if (result.status === "success") {
+        // Redirect or perform any cleanup actions after deletion
+        window.location.href = "/goodbye"; // Example redirect
+      }
+    } catch (err) {
+      console.error('Error deleting account:', err);
+    }
+  }
+
 
   useEffect(() => {
     if (currentUser) {
@@ -170,11 +186,18 @@ export default function Profile() {
                     <button className="btn btn-secondary mt-2">Send</button>
                   </div>
                 </div>
-              </div>
+                <div className="mb-3 row">
+                  <div className="col-sm-10">
+                    <button className="btn btn-danger" onClick={deleteAccount}>
+                      Delete Account
+                    </button>
+                  </div>
+                </div>
             </div>
           </div>
         </div>
       </div>
+    </div >
       <SignOutModal showModal={showModal} handleSignOut={confirmEmailChange} closeModal={closeModal} />
     </>
   )

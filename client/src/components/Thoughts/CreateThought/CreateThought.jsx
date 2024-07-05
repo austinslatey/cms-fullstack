@@ -44,7 +44,7 @@ export default function CreateThought() {
       const result = await response.json();
       clearForms();
       if (result.status === "success") {
-        console.log("Thought created successfully!");
+        window.location.href = "/";
       } else {
         console.error("Failed to create thought:", result.error);
       }

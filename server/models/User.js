@@ -27,13 +27,7 @@ const userSchema = new Schema(
         ref: 'Thought',
       },
     ],
-    following: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    ],
-    followers: [
+    friends: [
       {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -52,12 +46,8 @@ userSchema.pre("save", async function (next) {
   next()
 });
 
-userSchema.virtual('followingCount').get(function () {
-  return this.following.length;
-});
-
-userSchema.virtual('followersCount').get(function () {
-  return this.followers.length;
+userSchema.virtual('friendCount').get(function () {
+  return this.friends.length;
 });
 
 const User = model('User', userSchema);

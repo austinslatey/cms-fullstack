@@ -54,46 +54,28 @@ module.exports = {
     }
   },
 
-  followUser: async function (userId, followId) {
+  followUser: async function (username, followUsername) {
     try {
-      const user = await User.findById(userId);
-      const followUser = await User.findById(followId);
+      const user = await User.findOne({ username });
+      const followUser = await User.findOne({ username: followUsername });
 
       if (!user || !followUser) {
-        throw new Error('User not found');
+        return { status: 'error', message: 'User not found' };
       }
 
-      if (!user.following.includes(followId)) {
-        user.following.push(followId);
-        followUser.followers.push(userId);
+      if (!user.following.includes(followUser._id)) {
+        user.following.push(followUser._id);
         await user.save();
+      }
+
+      if (!followUser.followers.includes(user._id)) {
+        followUser.followers.push(user._id);
         await followUser.save();
-        return { status: 'success', message: 'User followed successfully' };
-      } else {
-        return { status: 'error', message: 'Already following this user' };
-      }
-    } catch (err) {
-      throw new Error(err.message);
-    }
-  },
-
-  unfollowUser: async function (userId, unfollowId) {
-    try {
-      const user = await User.findById(userId);
-      const unfollowUser = await User.findById(unfollowId);
-
-      if (!user || !unfollowUser) {
-        throw new Error('User not found');
       }
 
-      user.following = user.following.filter(id => id.toString() !== unfollowId);
-      unfollowUser.followers = unfollowUser.followers.filter(id => id.toString() !== userId);
-      await user.save();
-      await unfollowUser.save();
-      return { status: 'success', message: 'User unfollowed successfully' };
+      return { status: 'success', message: 'User followed successfully' };
     } catch (err) {
-      throw new Error(err.message);
+      return { status: 'error', message: 'Internal server error' };
     }
   },
-
-};
+}
