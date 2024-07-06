@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
 import ThoughtList from "../../Thoughts/ThoughtList/ThoughtList";
 import ProfileHeader from "../../ProfileHeader/ProfileHeader";
@@ -10,16 +10,21 @@ export default function About() {
 
   useEffect(() => {
     async function fetchUserPosts() {
-      if (currentUser && currentUser._id) {
+      if (currentUser && currentUser.username) {
         try {
           const response = await fetch(`/api/thoughts?username=${currentUser.username}`);
           const data = await response.json();
+          console.log("Fetched user posts:", data);
           if (data.status === "success") {
             setUserPosts(data.payload);
+          } else {
+            console.error("Failed to fetch user posts:", data.message);
           }
         } catch (error) {
           console.error("Error fetching user posts:", error);
         }
+      } else {
+        console.log("Current user is not defined");
       }
     }
 
@@ -42,6 +47,8 @@ export default function About() {
       const data = await response.json();
       if (data.status === "success") {
         setUserPosts(userPosts.map((post) => (post._id === id ? data.payload : post)));
+      } else {
+        console.error("Failed to update post:", data.message);
       }
     } catch (error) {
       console.error("Error updating post:", error);
@@ -60,6 +67,8 @@ export default function About() {
       const data = await response.json();
       if (data.status === "success") {
         setUserPosts(userPosts.filter((post) => post._id !== id));
+      } else {
+        console.error("Failed to delete post:", data.message);
       }
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -73,7 +82,7 @@ export default function About() {
         {userPosts.length > 0 ? (
           <ThoughtList thoughts={userPosts} onUpdate={handleUpdate} onDelete={handleDelete} />
         ) : (
-          <p className="text-center mt-3">No posts available.</p>
+          <p className="text-center mt-3 text-light">No posts available.</p>
         )}
       </div>
     </div>

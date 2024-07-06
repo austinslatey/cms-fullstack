@@ -4,8 +4,8 @@ import { useAppContext } from "../../providers/AppProvider";
 
 export default function ProfileHeader() {
   const { currentUser } = useAppContext();
-  const [followersCount, setFollowersCount] = useState(0); // Example: replace with actual follower count state
-  const [followingCount, setFollowingCount] = useState(0); // Example: replace with actual following count state
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
 
   useEffect(() => {
     async function fetchFollowersCount() {
@@ -14,6 +14,8 @@ export default function ProfileHeader() {
         const data = await response.json();
         if (data.status === "success") {
           setFollowersCount(data.payload.length);
+        } else {
+          console.error("Failed to fetch followers count:", data.message);
         }
       } catch (error) {
         console.error("Error fetching followers count:", error);
@@ -26,14 +28,18 @@ export default function ProfileHeader() {
         const data = await response.json();
         if (data.status === "success") {
           setFollowingCount(data.payload.length);
+        } else {
+          console.error("Failed to fetch following count:", data.message);
         }
       } catch (error) {
         console.error("Error fetching following count:", error);
       }
     }
 
-    fetchFollowersCount();
-    fetchFollowingCount();
+    if (currentUser && currentUser._id) {
+      fetchFollowersCount();
+      fetchFollowingCount();
+    }
   }, [currentUser]);
 
   return (

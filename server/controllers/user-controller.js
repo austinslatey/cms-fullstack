@@ -60,22 +60,63 @@ module.exports = {
       const followUser = await User.findOne({ username: followUsername });
 
       if (!user || !followUser) {
-        return { status: 'error', message: 'User not found' };
+        throw new Error('User not found');
       }
 
       if (!user.following.includes(followUser._id)) {
         user.following.push(followUser._id);
-        await user.save();
-      }
-
-      if (!followUser.followers.includes(user._id)) {
         followUser.followers.push(user._id);
+        await user.save();
         await followUser.save();
       }
 
-      return { status: 'success', message: 'User followed successfully' };
+      return { status: 'success', message: `${username} followed ${followUsername}` };
     } catch (err) {
-      return { status: 'error', message: 'Internal server error' };
+      throw new Error(err.message);
     }
   },
+
+  unfollowUser: async function (username, unfollowUsername) {
+    try {
+      const user = await User.findOne({ username });
+      const unfollowUser = await User.findOne({ username: unfollowUsername });
+
+      if (!user || !unfollowUser) {
+        throw new Error('User not found');
+      }
+
+      user.following = user.following.filter(id => !id.equals(unfollowUser._id));
+      unfollowUser.followers = unfollowUser.followers.filter(id => !id.equals(user._id));
+      await user.save();
+      await unfollowUser.save();
+
+      return { status: 'success', message: `${username} unfollowed ${unfollowUsername}` };
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  },
+
+  getFollowers: async function (userId) {
+    try {
+      const user = await User.findById(userId).populate('followers');
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return { status: 'success', payload: user.followers };
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  },
+
+  getFollowing: async function (userId) {
+    try {
+      const user = await User.findById(userId).populate('following');
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return { status: 'success', payload: user.following };
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  }
 }

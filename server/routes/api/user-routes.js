@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { getAll, getOne, getById, create, updateById, deleteById, followUser } = require("../../controllers/user-controller");
+const { getAll, getOne, getById, create, updateById, deleteById, followUser, unfollowUser, getFollowers, getFollowing } = require("../../controllers/user-controller");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -127,19 +127,54 @@ router.delete("/:id", async (req, res) => {
 });
 
 
-// user-routes.js
+
+
 router.post('/:username/follow', async (req, res) => {
-  const { followUsername } = req.body;
   const { username } = req.params;
+  const { followUsername } = req.body;
 
   try {
     const result = await followUser(username, followUsername);
-    if (result.status === 'error') {
-      return res.status(404).json(result);
-    }
-    return res.status(200).json(result);
+    res.status(200).json(result);
   } catch (error) {
-    return res.status(500).json({ status: 'error', message: 'Internal server error' });
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
+// Unfollow a user
+router.post('/:username/unfollow', async (req, res) => {
+  const { username } = req.params;
+  const { unfollowUsername } = req.body;
+
+  try {
+    const result = await unfollowUser(username, unfollowUsername);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
+// Get followers count
+router.get('/:id/followers', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await getFollowers(id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
+// Get following count
+router.get('/:id/following', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await getFollowing(id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
   }
 });
 

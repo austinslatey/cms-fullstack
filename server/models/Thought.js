@@ -21,8 +21,9 @@ const thoughtSchema = new Schema(
       default: Date.now,
       get: timestamp => dateFormat(timestamp)
     },
-    username: {
-      type: String,
+    user_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
       required: true
     },
     reactions: [reactionSchema]

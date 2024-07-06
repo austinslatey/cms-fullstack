@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import CreateThought from "../../Thoughts/CreateThought/CreateThought";
 import ThoughtList from "../../Thoughts/ThoughtList/ThoughtList";
 import LoginBlocker from "../Login/LoginBlocked";
-import { useAppContext } from "../../../providers/AppProvider"
+import { useAppContext } from "../../../providers/AppProvider";
 import "./Home.css";
 
 export default function Home() {
@@ -43,17 +43,28 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: currentUser.username,
+          username: currentUser.username, // Ensure username is passed correctly
           thoughtTitle: newTitle,
           thoughtText: newText,
         }),
       });
       const data = await response.json();
-      if (data.status === "success") {
-        setThoughts(thoughts.map(post => post._id === id ? data.payload : post));
+      if (response.ok) {
+        if (data.status === "success") {
+          setThoughts(thoughts.map(post => post._id === id ? data.payload : post));
+        } else {
+          console.error("Failed to update post:", data.message);
+          // Handle error response (e.g., show error message to user)
+        }
+      } else if (response.status === 403) {
+        console.error("Permission denied:", data.message);
+        // Handle permission denied error (e.g., show error message to user)
+      } else {
+        throw new Error("Failed to update post.");
       }
     } catch (error) {
       console.error("Error updating post:", error);
+      // Handle network error or other errors
     }
   };
 
@@ -64,11 +75,13 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: currentUser.username }),
+        body: JSON.stringify({ username: currentUser.username }), // Ensure username is passed correctly
       });
       const data = await response.json();
       if (data.status === "success") {
         setThoughts(thoughts.filter(post => post._id !== id));
+      } else {
+        console.error("Delete request failed:", data.msg);
       }
     } catch (error) {
       console.error("Error deleting post:", error);
