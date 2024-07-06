@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
 import UpdatePostModal from "../../Modal/UpdatePostModal";
 import { Dropdown, DropdownButton } from 'react-bootstrap';
@@ -6,6 +6,13 @@ import { Dropdown, DropdownButton } from 'react-bootstrap';
 export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   const { currentUser } = useAppContext();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  useEffect(() => {
+    if (currentUser && thought && thought.user_id) {
+      setIsFollowing(currentUser.following.includes(thought.user_id._id));
+    }
+  }, [currentUser, thought]);
 
   if (!thought || !currentUser) {
     return null;
@@ -19,7 +26,8 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: currentUser.username, // Ensure username is passed correctly
+          // Ensure username is passed correctly
+          username: currentUser.username,
           thoughtTitle: newTitle,
           thoughtText: newText,
         }),
@@ -27,15 +35,19 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
       const data = await response.json();
       if (data.status === "success") {
         onUpdate(data.payload._id, data.payload.thoughtTitle, data.payload.thoughtText);
-        setShowUpdateModal(false); // Close the modal after successful update
+        // Close the modal after successful update
+        setShowUpdateModal(false);
       } else {
-        console.error("Update request failed:", data.message); // Log error message if update fails
+        // Log error message if update fails
+        console.error("Update request failed:", data.message);
       }
     } catch (error) {
       console.error("Error updating post:", error);
     }
   };
 
+
+  // View Others profiles
   const viewProfile = () => {
     window.location.href = `/profile/${thought.user_id.username}`;
   };
@@ -54,11 +66,35 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
 
       if (data.status === 'success') {
         alert('Friend added successfully');
+        setIsFollowing(true); // Update isFollowing state
       } else {
         alert(data.message);
       }
     } catch (error) {
       console.error('Error adding friend:', error);
+    }
+  };
+
+  const unfollowUser = async () => {
+    try {
+      const response = await fetch(`/api/users/${currentUser.username}/unfollow`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ unfollowUsername: thought.user_id.username }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        alert('Friend unfollowed successfully');
+        setIsFollowing(false); // Update isFollowing state
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error unfollowing friend:', error);
     }
   };
 
@@ -72,7 +108,11 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
           <div className="col-md-6 d-flex justify-content-end">
             <DropdownButton id="dropdown-basic-button" title="Options" variant="dark">
               <Dropdown.Item onClick={viewProfile}>View Profile</Dropdown.Item>
-              <Dropdown.Item onClick={followUser}>Follow {thought.user_id.username}</Dropdown.Item>
+              {isFollowing ? (
+                <Dropdown.Item onClick={unfollowUser}>Unfollow {thought.user_id.username}</Dropdown.Item>
+              ) : (
+                <Dropdown.Item onClick={followUser}>Follow {thought.user_id.username}</Dropdown.Item>
+              )}
             </DropdownButton>
           </div>
         )}
