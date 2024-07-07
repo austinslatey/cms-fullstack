@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { getAll, getOne, getById, create, updateById, deleteById, followUser, unfollowUser, getFollowers, getFollowing } = require("../../controllers/user-controller");
+const { getAll, getOne, getById, create, updateById, deleteById, followUser, unfollowUser, getFollowers, getFollowing, checkFollowingStatus } = require("../../controllers/user-controller");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -177,5 +177,18 @@ router.get('/:id/following', async (req, res) => {
     res.status(500).json({ status: 'error', message: error.message });
   }
 });
+
+// Check if the current user is following the profile user
+router.get('/:currentUsername/following/:profileUsername', async (req, res) => {
+  const { currentUsername, profileUsername } = req.params;
+
+  try {
+    const result = await checkFollowingStatus(currentUsername, profileUsername);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+});
+
 
 module.exports = router;

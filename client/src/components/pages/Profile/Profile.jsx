@@ -3,11 +3,12 @@ import { useParams } from "react-router-dom";
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { useAppContext } from "../../../providers/AppProvider";
 
-export default function Profile(thought) {
+export default function Profile() {
   const { username } = useParams();
   const [thoughts, setThoughts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAppContext();
+  const [isFollowing, setIsFollowing] = useState(false);
 
   useEffect(() => {
     async function fetchUserThoughts() {
@@ -33,6 +34,27 @@ export default function Profile(thought) {
     fetchUserThoughts();
   }, [username]);
 
+  useEffect(() => {
+    async function checkFollowingStatus() {
+      if (currentUser) {
+        try {
+          const response = await fetch(`/api/users/${currentUser.username}/following/${username}`);
+          const data = await response.json();
+          console.log("Following status response:", data); // Debugging log
+          if (response.ok) {
+            setIsFollowing(data.payload.following); // Update isFollowing state
+          } else {
+            console.error("Failed to fetch following status:", data.message);
+          }
+        } catch (error) {
+          console.error("Error checking following status:", error);
+        }
+      }
+    }
+
+    checkFollowingStatus();
+  }, [currentUser, username]);
+
   const followUser = async () => {
     try {
       const response = await fetch(`/api/users/${currentUser.username}/follow`, {
@@ -40,18 +62,42 @@ export default function Profile(thought) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ followUsername: thought.user_id.username }),
+        body: JSON.stringify({ followUsername: username }), // Use the profile's username here
       });
 
       const data = await response.json();
 
       if (data.status === 'success') {
         alert('Friend added successfully');
+        setIsFollowing(true); // Update isFollowing state
       } else {
         alert(data.message);
       }
     } catch (error) {
       console.error('Error adding friend:', error);
+    }
+  };
+
+  const unfollowUser = async () => {
+    try {
+      const response = await fetch(`/api/users/${currentUser.username}/unfollow`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ unfollowUsername: username }), // Use the profile's username here
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        alert('Friend unfollowed successfully');
+        setIsFollowing(false); // Update isFollowing state
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error('Error unfollowing friend:', error);
     }
   };
 
@@ -75,13 +121,17 @@ export default function Profile(thought) {
             </div>
             <div className="col-md-6 d-flex justify-content-end">
               <DropdownButton id="dropdown-basic-button" title="Options" variant="dark">
-                <Dropdown.Item onClick={followUser}>Follow {thought.user_id.username}</Dropdown.Item>
+                {isFollowing ? (
+                  <Dropdown.Item onClick={unfollowUser}>Unfollow {thought.user_id.username}</Dropdown.Item>
+                ) : (
+                  <Dropdown.Item onClick={followUser}>Follow {thought.user_id.username}</Dropdown.Item>
+                )}
               </DropdownButton>
             </div>
           </div>
           <h2 className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtTitle}</h2>
           <p className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtText}</p>
-          <p className="text-light text-center m-4">{thought.createdAt}</p>
+          <p className="text-light text-center m-4">{new Date(thought.createdAt).toLocaleString()}</p>
           <div className="d-flex justify-content-center my-2">
             <button className="btn btn-primary m-2">Comment</button>
             <button className="btn btn-primary m-2">Like this</button>

@@ -118,5 +118,22 @@ module.exports = {
     } catch (err) {
       throw new Error(err.message);
     }
+  },
+  // Method to check if the current user is following the profile user
+  checkFollowingStatus: async function (currentUserUsername, profileUsername) {
+    try {
+      const currentUser = await User.findOne({ username: currentUserUsername }).populate('following');
+      const profileUser = await User.findOne({ username: profileUsername });
+
+      if (!currentUser || !profileUser) {
+        throw new Error('User not found');
+      }
+
+      const isFollowing = currentUser.following.some(user => user._id.equals(profileUser._id));
+      return { status: 'success', payload: { following: isFollowing } };
+    } catch (err) {
+      throw new Error(err.message);
+    }
   }
+
 }
