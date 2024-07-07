@@ -27,7 +27,7 @@ export default function Login() {
       const response = await fetch("/api/users/login", {
         method: 'POST',
         body: JSON.stringify({
-          username: formData.loginPassword,
+          username: formData.loginUsername,
           email: formData.loginEmail,
           password: formData.loginPassword
         }),
@@ -49,7 +49,7 @@ export default function Login() {
       <div className="container bg-dark my-2 login">
         <div className="row justify-content-center py-5">
           <div className="col-md-6">
-            <div className="card border-light  text-light text-center">
+            <div className="card border-light text-light text-center">
               <div className="card-body">
                 <h3 className="card-title text-center mb-4">Login</h3>
                 <form onSubmit={handleLogin}>
