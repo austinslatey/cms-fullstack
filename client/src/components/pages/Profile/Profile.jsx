@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import { useAppContext } from "../../../providers/AppProvider";
+import ProfileHeader from "../../ProfileHeader/ProfileHeader";
+import "./Profile.css"
 
 export default function Profile() {
   const { username } = useParams();
   const [thoughts, setThoughts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [profileUser, setProfileUser] = useState(null);
   const { currentUser } = useAppContext();
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false); // Initial state
 
   useEffect(() => {
     async function fetchUserThoughts() {
@@ -31,7 +34,22 @@ export default function Profile() {
       }
     }
 
+    async function fetchUserProfile() {
+      try {
+        const response = await fetch(`/api/users/username/${username}`);
+        const data = await response.json();
+        if (response.ok) {
+          setProfileUser(data.payload);
+        } else {
+          console.error("Failed to fetch user profile:", data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    }
+
     fetchUserThoughts();
+    fetchUserProfile();
   }, [username]);
 
   useEffect(() => {
@@ -40,7 +58,6 @@ export default function Profile() {
         try {
           const response = await fetch(`/api/users/${currentUser.username}/following/${username}`);
           const data = await response.json();
-          console.log("Following status response:", data); // Debugging log
           if (response.ok) {
             setIsFollowing(data.payload.following); // Update isFollowing state
           } else {
@@ -110,8 +127,15 @@ export default function Profile() {
   }
 
   return (
-    <div className="profile-page">
-      <h1>{username}'s Profile</h1>
+    <div className="profile-page border-top">
+      {profileUser && (
+        <ProfileHeader
+          username={profileUser.username}
+          bio={profileUser.bio}
+          avatar={profileUser.avatar}
+          _id={profileUser._id}
+        />
+      )}
 
       {thoughts.map((thought) => (
         <div key={thought._id} className="card bg-dark text-light my-2 container">

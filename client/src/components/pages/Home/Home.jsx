@@ -89,7 +89,7 @@ export default function Home() {
   };
 
   return (
-    <div className="bg-secondary">
+    <div className="homepage">
       {!loggedIn ? (
         <LoginBlocker />
       ) : (

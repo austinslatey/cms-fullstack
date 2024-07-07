@@ -190,5 +190,19 @@ router.get('/:currentUsername/following/:profileUsername', async (req, res) => {
   }
 });
 
+// Get user by username
+router.get('/username/:username', async (req, res) => {
+  try {
+    const payload = await getOne({ username: req.params.username });
+    if (!payload) {
+      return res.status(404).json({ status: 'error', msg: 'User not found' });
+    }
+    res.status(200).json({ status: 'success', payload });
+  } catch (err) {
+    res.status(500).json({ status: 'error', msg: err.message });
+  }
+});
+
+
 
 module.exports = router;

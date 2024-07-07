@@ -77,7 +77,14 @@ export default function About() {
 
   return (
     <div className="about-page border-top">
-      <ProfileHeader />
+      {currentUser && (
+        <ProfileHeader
+          username={currentUser.username}
+          bio={currentUser.bio}
+          avatar={currentUser.avatar}
+          _id={currentUser._id}
+        />
+      )}
       <div className="container">
         {userPosts.length > 0 ? (
           <ThoughtList thoughts={userPosts} onUpdate={handleUpdate} onDelete={handleDelete} />

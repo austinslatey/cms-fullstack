@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { useAppContext } from "../../providers/AppProvider";
-// import defaultAvatar from "./default-avatar.png"; // Replace with your default avatar image
 
-export default function ProfileHeader() {
-  const { currentUser } = useAppContext();
+export default function ProfileHeader({ username, bio, avatar, _id }) {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
   useEffect(() => {
     async function fetchFollowersCount() {
       try {
-        const response = await fetch(`/api/users/${currentUser._id}/followers`);
+        const response = await fetch(`/api/users/${_id}/followers`);
         const data = await response.json();
         if (data.status === "success") {
           setFollowersCount(data.payload.length);
@@ -24,7 +23,7 @@ export default function ProfileHeader() {
 
     async function fetchFollowingCount() {
       try {
-        const response = await fetch(`/api/users/${currentUser._id}/following`);
+        const response = await fetch(`/api/users/${_id}/following`);
         const data = await response.json();
         if (data.status === "success") {
           setFollowingCount(data.payload.length);
@@ -36,21 +35,21 @@ export default function ProfileHeader() {
       }
     }
 
-    if (currentUser && currentUser._id) {
+    if (_id) {
       fetchFollowersCount();
       fetchFollowingCount();
     }
-  }, [currentUser]);
+  }, [_id]);
 
   return (
     <div className="profile-header bg-dark text-light text-center py-5">
       <img
-        // src={currentUser.avatar || defaultAvatar}
+        src={avatar}
         alt="Profile"
         className="profile-avatar rounded-circle mb-3"
       />
-      <h1 className="mb-3">{currentUser?.username}</h1>
-      <p className="text-secondary mb-3">{currentUser?.bio || "No bio provided"}</p>
+      <h1 className="mb-3">{username}</h1>
+      <p className="text-secondary mb-3">{bio || "No bio provided"}</p>
       <div className="profile-counts mb-3">
         <span className="me-3">
           <strong>{followersCount}</strong> Followers
@@ -62,3 +61,10 @@ export default function ProfileHeader() {
     </div>
   );
 }
+
+ProfileHeader.propTypes = {
+  username: PropTypes.string.isRequired,
+  bio: PropTypes.string,
+  avatar: PropTypes.string,
+  _id: PropTypes.string.isRequired,
+};
