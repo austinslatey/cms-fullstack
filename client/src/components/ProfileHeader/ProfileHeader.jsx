@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useAppContext } from "../../providers/AppProvider";
 
 export default function ProfileHeader({ username, bio, avatar, _id }) {
   const [followersCount, setFollowersCount] = useState(0);
