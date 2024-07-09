@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { Buffer } from 'buffer';
+import defaultImg from "../../assets/react.svg";
 
-export default function ProfileHeader({ username, bio, avatar, _id,  isCurrentUser }) {
+export default function ProfileHeader({ username, bio, avatar = {}, _id, isCurrentUser }) {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
@@ -46,11 +48,19 @@ export default function ProfileHeader({ username, bio, avatar, _id,  isCurrentUs
 
   return (
     <div className="profile-header bg-dark text-light text-center py-5">
-      <img
-        src={avatar}
-        alt="Profile"
-        className="profile-avatar rounded-circle mb-3"
-      />
+      {avatar.data && avatar.contentType ? (
+        <img
+          src={`data:${avatar.contentType};base64,${Buffer.from(avatar.data).toString('base64')}`}
+          alt="Profile"
+          className="profile-avatar rounded-circle mb-3"
+        />
+      ) : (
+        <img
+          src={defaultImg}
+          alt="Default Profile"
+          className="profile-avatar rounded-circle mb-3"
+        />
+      )}
       <h1 className="mb-3">{username}</h1>
       <p className="text-secondary mb-3">{bio || "No bio provided"}</p>
       <div className="profile-counts mb-3">
@@ -62,7 +72,7 @@ export default function ProfileHeader({ username, bio, avatar, _id,  isCurrentUs
         </span>
       </div>
       {isCurrentUser && (
-        <button onClick={handleEditProfile} className="btn btn-primary">
+        <button className="btn btn-secondary mt-3" onClick={handleEditProfile}>
           Edit Profile
         </button>
       )}
@@ -73,7 +83,13 @@ export default function ProfileHeader({ username, bio, avatar, _id,  isCurrentUs
 ProfileHeader.propTypes = {
   username: PropTypes.string.isRequired,
   bio: PropTypes.string,
-  avatar: PropTypes.string,
+  avatar: PropTypes.shape({
+    data: PropTypes.oneOfType([
+      PropTypes.instanceOf(Buffer),
+      PropTypes.array,
+    ]),
+    contentType: PropTypes.string,
+  }),
   _id: PropTypes.string.isRequired,
   isCurrentUser: PropTypes.bool.isRequired,
 };
