@@ -24,6 +24,10 @@ const userSchema = new Schema(
     bio: {
       type: String,
     },
+    avatar: {
+      data: Buffer,
+      contentType: String,
+    },
     thoughts: [
       {
         type: Schema.Types.ObjectId,
