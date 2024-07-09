@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
-export default function ProfileHeader({ username, bio, avatar, _id }) {
+export default function ProfileHeader({ username, bio, avatar, _id,  isCurrentUser }) {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
 
@@ -40,6 +40,10 @@ export default function ProfileHeader({ username, bio, avatar, _id }) {
     }
   }, [_id]);
 
+  const handleEditProfile = () => {
+    window.location.href = "/usersettings";
+  };
+
   return (
     <div className="profile-header bg-dark text-light text-center py-5">
       <img
@@ -57,6 +61,11 @@ export default function ProfileHeader({ username, bio, avatar, _id }) {
           <strong>{followingCount}</strong> Following
         </span>
       </div>
+      {isCurrentUser && (
+        <button onClick={handleEditProfile} className="btn btn-primary">
+          Edit Profile
+        </button>
+      )}
     </div>
   );
 }
@@ -66,4 +75,5 @@ ProfileHeader.propTypes = {
   bio: PropTypes.string,
   avatar: PropTypes.string,
   _id: PropTypes.string.isRequired,
+  isCurrentUser: PropTypes.bool.isRequired,
 };

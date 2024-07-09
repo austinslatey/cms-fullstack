@@ -83,6 +83,7 @@ export default function About() {
           bio={currentUser.bio}
           avatar={currentUser.avatar}
           _id={currentUser._id}
+          isCurrentUser={true}
         />
       )}
       <div className="container">
