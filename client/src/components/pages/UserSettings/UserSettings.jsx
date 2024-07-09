@@ -3,6 +3,7 @@ import { useAppContext } from "../../../providers/AppProvider";
 import ChangeUsername from "../../Settings/Username/Username";
 import ChangeEmail from "../../Settings/Email/Email";
 import DeleteAccount from "../../Settings/DeleteAccount/DeleteAccount";
+import ChangeBio from "../../Settings/Bio/Bio";
 
 export default function UserSettings() {
   const { currentUser } = useAppContext();
@@ -40,13 +41,7 @@ export default function UserSettings() {
                 {/* Profile settings content */}
                 <ChangeUsername />
                 <ChangeEmail />
-                <div className="mb-3 row">
-                  <label className="col-sm-3 col-form-label text-light">Change Bio</label>
-                  <div className="col-sm-7">
-                    <input className="form-control" type="text" placeholder="Enter a new bio" />
-                    <button className="btn btn-secondary mt-2">Send</button>
-                  </div>
-                </div>
+                <ChangeBio />
                 <DeleteAccount />
 
               </div>
