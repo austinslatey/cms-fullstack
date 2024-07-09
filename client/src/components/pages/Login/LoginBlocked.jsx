@@ -6,7 +6,7 @@ export default function LoginBlocker() {
       <h1>Login to create a new post!</h1>
       <div className="row justify-content-center">
         <div className="col-md-5">
-          <Link to="/Login">
+          <Link to="/login">
             <button type="submit" className="btn btn-secondary mt-2">
               Login
             </button>

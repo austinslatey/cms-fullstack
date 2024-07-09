@@ -6,11 +6,9 @@ require("dotenv").config();
 
 async function createToken(user) {
   const tokenData = { email: user.email }
-  const token = jwt.sign(tokenData, process.env.TOKEN_ENCRYPT_KEY)
+  const token = await jwt.sign(tokenData, process.env.TOKEN_ENCRYPT_KEY)
   return token
 }
-
-
 
 router.get("/", async (req, res) => {
   try {
@@ -21,35 +19,59 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  try {
+    const payload = await create(req.body);
+    const token = await createToken(payload);
+    return res
+      .status(200)
+      .cookie('auth-cookie', token, {
+        maxAge: 86400 * 1000,
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production'
+      })
+      .json({ status: 'success', payload: payload });
+  } catch (err) {
+    return res.status(500).json({ status: 'error', msg: err.message });
+  }
+});
+
 router.post("/login", async (req, res) => {
-  let user
+  let user;
   try {
     user = await getOne({ email: req.body.email });
+    const verify = await bcrypt.compare(req.body.password, user.password);
+    if (!verify) {
+      return res.status(404).json({ status: 'error', message: 'Could not authenticate user' });
+    }
+
+    const token = await createToken(user);
+    res
+      .status(200)
+      .cookie('auth-cookie', token, {
+        maxAge: 86400000,
+        httpOnly: false,
+        secure: process.env.NODE_ENV === 'production'
+      })
+      .json({ status: 'success', results: user });
   } catch (err) {
-    return res.status(500).json({ status: 'error', msg: 'Could not authenticate user' });
-  }
-
-  if (!user) {
-    return res.status(500).json({ status: 'error', msg: 'Could not authenticate user' });
-  }
-
-  const verify = await bcrypt.compare(req.body.password, user.password);
-
-  if (!verify) {
-    return res.status(500).json({ status: 'error', msg: 'Could not authenticate user' });
-  }
-
-  const token = await createToken(user);
-
-  res
-    .status(200)
-    .cookie('auth-cookie', token, {
-      maxAge: 86400 * 1000,
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production'
-    })
-    .json({ status: 'success', payload: user });
+    res.status(401).json({ status: 'error', message: 'Could not authenticate user' });
+  };
 });
+
+// Get user by username
+router.get('/username/:username', async (req, res) => {
+  try {
+    const payload = await getOne({ username: req.params.username });
+    if (!payload) {
+      return res.status(404).json({ status: 'error', msg: 'User not found' });
+    }
+    res.status(200).json({ status: 'success', payload });
+  } catch (err) {
+    res.status(500).json({ status: 'error', msg: err.message });
+  }
+});
+
 
 
 router.get("/verify", async (req, res) => {
@@ -82,22 +104,7 @@ router.get("/verify", async (req, res) => {
     return res.status(500).json({ status: 'error', msg: 'Could not authenticate user' });
   }
 });
-router.post("/", async (req, res) => {
-  try {
-    const payload = await create(req.body);
-    const token = await createToken(payload);
-    return res
-      .status(200)
-      .cookie('auth-cookie', token, {
-        maxAge: 86400 * 1000,
-        httpOnly: false,
-        secure: process.env.NODE_ENV === 'production'
-      })
-      .json({ status: 'success', payload: payload });
-  } catch (err) {
-    return res.status(500).json({ status: 'error', msg: err.message });
-  }
-});
+
 
 router.get("/:id", async (req, res) => {
   try {
@@ -125,9 +132,6 @@ router.delete("/:id", async (req, res) => {
     return res.status(500).json({ status: 'error', msg: err.message });
   }
 });
-
-
-
 
 router.post('/:username/follow', async (req, res) => {
   const { username } = req.params;
@@ -190,18 +194,6 @@ router.get('/:currentUsername/following/:profileUsername', async (req, res) => {
   }
 });
 
-// Get user by username
-router.get('/username/:username', async (req, res) => {
-  try {
-    const payload = await getOne({ username: req.params.username });
-    if (!payload) {
-      return res.status(404).json({ status: 'error', msg: 'User not found' });
-    }
-    res.status(200).json({ status: 'success', payload });
-  } catch (err) {
-    res.status(500).json({ status: 'error', msg: err.message });
-  }
-});
 
 
 

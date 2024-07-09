@@ -10,9 +10,9 @@ module.exports = {
     }
   },
 
-  getOne: async function (criteriaObj) {
+  getOne: async function (params) {
     try {
-      return await User.findOne(criteriaObj)
+      return await User.findOne(params)
     } catch (err) {
       throw new Error(err.message)
     }

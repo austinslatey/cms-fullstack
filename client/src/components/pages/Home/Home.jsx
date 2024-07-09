@@ -43,7 +43,7 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: currentUser.username, // Ensure username is passed correctly
+          username: currentUser.username,
           thoughtTitle: newTitle,
           thoughtText: newText,
         }),
@@ -75,7 +75,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: currentUser.username }), // Ensure username is passed correctly
+        body: JSON.stringify({ username: currentUser.username }),
       });
       const data = await response.json();
       if (data.status === "success") {
