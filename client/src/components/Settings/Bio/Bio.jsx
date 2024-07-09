@@ -48,7 +48,7 @@ export default function ChangeBio() {
     if (currentUser) {
       setUserData(currentUser);
       setFormData({
-        bio: currentUser.bio,
+        bio: currentUser.bio || "",
       });
     }
   }, [currentUser]);
@@ -65,7 +65,7 @@ export default function ChangeBio() {
             name="bio"
             value={formData.bio}
             type="text"
-            placeholder={`change ${userData.bio}`}
+            placeholder={`${userData.bio ? userData.bio : "create your bio"}`}
             onChange={handleInputChange}
           />
           <button
