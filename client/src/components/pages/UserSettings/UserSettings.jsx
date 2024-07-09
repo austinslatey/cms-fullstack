@@ -4,6 +4,7 @@ import ChangeUsername from "../../Settings/Username/Username";
 import ChangeEmail from "../../Settings/Email/Email";
 import DeleteAccount from "../../Settings/DeleteAccount/DeleteAccount";
 import ChangeBio from "../../Settings/Bio/Bio";
+import ChangeAvatar from "../../Settings/Avatar/Avatar";
 
 export default function UserSettings() {
   const { currentUser } = useAppContext();
@@ -42,6 +43,7 @@ export default function UserSettings() {
                 <ChangeUsername />
                 <ChangeEmail />
                 <ChangeBio />
+                <ChangeAvatar />
                 <DeleteAccount />
 
               </div>
