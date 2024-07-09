@@ -3,6 +3,20 @@ const { getAll, getOne, getById, create, updateById, deleteById, followUser, unf
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const multer = require('multer');
+const fs = require('fs');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
+
 
 async function createToken(user) {
   const tokenData = { email: user.email }
@@ -194,6 +208,25 @@ router.get('/:currentUsername/following/:profileUsername', async (req, res) => {
   }
 });
 
+router.put("/:id/avatar", upload.single('avatar'), async (req, res) => {
+  try {
+    if (!req.file) {
+      throw new Error('No file uploaded');
+    }
+
+    const filePath = req.file.path;
+    const avatarData = {
+      data: fs.readFileSync(filePath),
+      contentType: req.file.mimetype,
+    };
+
+    const payload = await updateById(req.params.id, { avatar: avatarData });
+    return res.status(200).json({ status: 'success', payload: payload });
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+    return res.status(500).json({ status: 'error', msg: err.message });
+  }
+});
 
 
 
