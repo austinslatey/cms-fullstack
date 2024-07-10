@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Buffer } from 'buffer';
-import defaultImg from "../../assets/react.svg";
+import defaultImg from "../../assets/avi.png";
 
 export default function ProfileHeader({ username, bio, avatar = {}, _id, isCurrentUser }) {
   const [followersCount, setFollowersCount] = useState(0);
