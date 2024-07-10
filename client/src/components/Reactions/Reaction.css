@@ -1,0 +1,18 @@
+.add-reaction {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.reaction-dropdown {
+  width: 100%;
+  /* Adjust width as needed */
+  margin-top: 10px;
+}
+
+.reaction-dropdown .form-control {
+  width: 100%;
+  /* Ensure textarea takes full width */
+  margin-bottom: 10px;
+}
