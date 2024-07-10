@@ -3,7 +3,7 @@ const { Thought, User } = require("../models");
 module.exports = {
   getAll: async function () {
     try {
-      return await Thought.find({}).populate('user_id', 'username');
+      return await Thought.find({}).populate('user_id', 'username avatar');
     } catch (err) {
       throw new Error(err.message);
     }
@@ -32,7 +32,7 @@ module.exports = {
       if (!user) {
         throw new Error('User not found');
       }
-      const thoughts = await Thought.find({ user_id: user._id }).populate('user_id', 'username');
+      const thoughts = await Thought.find({ user_id: user._id }).populate('user_id', 'username avatar');
       console.log(`Fetched ${thoughts.length} thoughts for username: ${username}`);
       return thoughts;
     } catch (err) {
