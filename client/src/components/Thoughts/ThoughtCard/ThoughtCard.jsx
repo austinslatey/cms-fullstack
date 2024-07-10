@@ -3,9 +3,9 @@ import { useAppContext } from "../../../providers/AppProvider";
 import { Buffer } from 'buffer';
 import UpdatePostModal from "../../Modal/UpdatePostModal";
 import { Dropdown, DropdownButton } from 'react-bootstrap';
-import defaultImg from "../../../assets/react.svg";
+import AddReaction from "../../Reactions/Reactions";
+import defaultImg from "../../../assets/avi.png";
 import "./ThoughtCard.css";
-
 
 export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   const { currentUser } = useAppContext();
@@ -150,9 +150,10 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
       <h1 className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtTitle}</h1>
       <p className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtText}</p>
       <p className="text-light text-center m-4">{thought.createdAt}</p>
-      <div className="d-flex justify-content-center my-2">
-        <button className="btn btn-primary m-2">Comment</button>
-        <button className="btn btn-primary m-2">Like this</button>
+      <div className="d-flex justify-content-between align-items-center">
+        <AddReaction thoughtId={thought._id} />
+
+        <button className="btn btn-primary">Like</button>
       </div>
       <UpdatePostModal
         show={showUpdateModal}
