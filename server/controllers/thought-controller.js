@@ -3,7 +3,9 @@ const { Thought, User } = require("../models");
 module.exports = {
   getAll: async function () {
     try {
-      return await Thought.find({}).populate('user_id', 'username avatar');
+      return await Thought.find({})
+        .populate('user_id', 'username avatar bio')
+        .populate('reactions.user_id', 'username avatar');
     } catch (err) {
       throw new Error(err.message);
     }
@@ -11,7 +13,9 @@ module.exports = {
 
   getOne: async function (criteriaObj) {
     try {
-      return await Thought.findOne(criteriaObj).populate('user_id', 'username avatar bio');
+      return await Thought.findOne(criteriaObj)
+        .populate('user_id', 'username avatar bio')
+        .populate('reactions.user_id', 'username avatar');
     } catch (err) {
       throw new Error(err.message);
     }
@@ -19,7 +23,9 @@ module.exports = {
 
   getById: async function (id) {
     try {
-      return await Thought.findById(id).populate('user_id', 'username avatar bio');
+      return await Thought.findById(id)
+        .populate('user_id', 'username avatar bio')
+        .populate('reactions.user_id', 'username avatar');
     } catch (err) {
       throw new Error(err.message);
     }
@@ -32,7 +38,9 @@ module.exports = {
       if (!user) {
         throw new Error('User not found');
       }
-      const thoughts = await Thought.find({ user_id: user._id }).populate('user_id', 'username avatar');
+      const thoughts = await Thought.find({ user_id: user._id })
+        .populate('user_id', 'username avatar bio')
+        .populate('reactions.user_id', 'username avatar');
       console.log(`Fetched ${thoughts.length} thoughts for username: ${username}`);
       return thoughts;
     } catch (err) {
@@ -93,5 +101,37 @@ module.exports = {
     } catch (err) {
       throw new Error(err.message);
     }
-  }
+  },
+
+  addReaction: async function (thoughtId, reactionData) {
+    try {
+      const thought = await Thought.findById(thoughtId);
+      if (!thought) {
+        throw new Error('Thought not found');
+      }
+
+      const user = await User.findOne({ username: reactionData.username });
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const reaction = {
+        reactionBody: reactionData.reactionBody,
+        username: user.username,
+        user_id: user._id
+      };
+
+      thought.reactions.push(reaction);
+      await thought.save();
+
+      // Retrieve the thought again to populate the fields
+      const populatedThought = await Thought.findById(thoughtId)
+        .populate('user_id', 'username avatar bio')
+        .populate('reactions.user_id', 'username avatar');
+
+      return populatedThought;
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  },
 };
