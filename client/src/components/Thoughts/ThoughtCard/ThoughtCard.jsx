@@ -1,16 +1,29 @@
 import { useState, useEffect } from "react";
 import { useAppContext } from "../../../providers/AppProvider";
+import { Buffer } from 'buffer';
 import UpdatePostModal from "../../Modal/UpdatePostModal";
 import { Dropdown, DropdownButton } from 'react-bootstrap';
+import defaultImg from "../../../assets/react.svg";
+import "./ThoughtCard.css";
+
 
 export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   const { currentUser } = useAppContext();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   useEffect(() => {
     if (currentUser && thought && thought.user_id) {
       setIsFollowing(currentUser.following.includes(thought.user_id._id));
+      if (thought.user_id.avatar && thought.user_id.avatar.data) {
+        const buffer = Buffer.from(thought.user_id.avatar.data);
+        const base64String = buffer.toString('base64');
+        const avatarUrl = `data:${thought.user_id.avatar.contentType};base64,${base64String}`;
+        setAvatarUrl(avatarUrl);
+      } else {
+        setAvatarUrl(defaultImg);
+      }
     }
   }, [currentUser, thought]);
 
@@ -96,8 +109,21 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   return (
     <div className="card bg-dark text-light my-2 container">
       <div className="row m-2 px-4 py-4 align-items-center">
-        <div className="col-md-6">
-          <p className="text-left">{thought.user_id.username} posted</p>
+        <div className="col-md-6 d-flex align-items-center">
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt="Profile"
+              className="profile-avatar rounded-circle mb-3"
+            />
+          ) : (
+            <img
+              src={defaultImg}
+              alt="Default Profile"
+              className="profile-avatar rounded-circle mb-3"
+            />
+          )}
+          <p className="px-2">{thought.user_id.username} posted</p>
         </div>
         {currentUser.username !== thought.user_id.username && (
           <div className="col-md-6 d-flex justify-content-end">
@@ -112,7 +138,7 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
           </div>
         )}
         {currentUser && currentUser.username === thought.user_id.username && (
-          <div className="col-md-6 d-flex justify-content-end ">
+          <div className="col-md-6 d-flex justify-content-end">
             <DropdownButton id="dropdown-basic-button" title="Options" variant="dark">
               <Dropdown.Item className="btn btn-warning p-2 text-center bg-warning" onClick={() => setShowUpdateModal(true)}>Update</Dropdown.Item>
               <Dropdown.Item className="btn btn-danger p-2 text-center bg-danger" onClick={() => onDelete(thought._id)}>Delete</Dropdown.Item>
