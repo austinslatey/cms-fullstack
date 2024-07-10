@@ -2,6 +2,7 @@ import React from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Home from "./components/pages/Home/Home"
 import About from "./components/pages/About/About"
+import SinglePost from "./components/pages/SinglePost/SinglePost"
 import UserSettings from "./components/pages/UserSettings/UserSettings"
 import Profile from "./components/pages/Profile/Profile"
 import Signup from "./components/pages/Signup/Signup"
@@ -25,6 +26,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/usersettings" element={<UserSettings />} />
           <Route path="/profile/:username" element={<Profile />} />
+          <Route path="/thought/:id" element={<SinglePost />} />
         </Routes>
         <Footer />
       </BrowserRouter>
