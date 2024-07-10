@@ -28,7 +28,7 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
   }, [currentUser, thought]);
 
   if (!thought || !currentUser || !thought.user_id) {
-    return null; // or handle the case where thought or currentUser is not available
+    return null;
   }
 
   const handleUpdate = async (newTitle, newText) => {
@@ -151,7 +151,7 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
       <p className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtText}</p>
       <p className="text-light text-center m-4">{thought.createdAt}</p>
       <div className="d-flex justify-content-between align-items-center">
-        <AddReaction thoughtId={thought._id} />
+        <AddReaction thought={thought} />
 
         <button className="btn btn-primary">Like</button>
       </div>
