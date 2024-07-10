@@ -52,13 +52,13 @@ export default function ProfileHeader({ username, bio, avatar = {}, _id, isCurre
         <img
           src={`data:${avatar.contentType};base64,${Buffer.from(avatar.data).toString('base64')}`}
           alt="Profile"
-          className="profile-avatar rounded-circle mb-3"
+          className="profile-header-avatar rounded-circle mb-3"
         />
       ) : (
         <img
           src={defaultImg}
           alt="Default Profile"
-          className="profile-avatar rounded-circle mb-3"
+          className="profile-header-avatar rounded-circle mb-3"
         />
       )}
       <h1 className="mb-3">{username}</h1>
