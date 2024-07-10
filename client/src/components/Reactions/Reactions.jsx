@@ -1,28 +1,21 @@
 import { useState } from "react";
 import { useAppContext } from "../../providers/AppProvider";
+import CommentModal from "../Modal/CommentModal";
 import "./Reaction.css";
 
-export default function AddReaction({ thoughtId }) {
+export default function AddReaction({ thought }) {
   const { currentUser } = useAppContext();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [reactionText, setReactionText] = useState("");
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleChange = (e) => {
-    setReactionText(e.target.value);
-  };
-
-  const addReaction = async () => {
+  const handleComment = async () => {
     if (reactionText.trim() === "") {
       alert("Reaction cannot be empty");
       return;
     }
 
     try {
-      const response = await fetch(`/api/thoughts/${thoughtId}/reactions`, {
+      const response = await fetch(`/api/thoughts/${thought._id}/reactions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +32,7 @@ export default function AddReaction({ thoughtId }) {
       if (data.status === 'success') {
         alert('Reaction added successfully');
         setReactionText("");
-        setIsDropdownOpen(false);
+        setIsCommentModalOpen(false);
       } else {
         alert(data.msg);
       }
@@ -50,23 +43,18 @@ export default function AddReaction({ thoughtId }) {
 
   return (
     <>
-      <button className="btn btn-primary m-2" onClick={toggleDropdown}>
-        {isDropdownOpen ? "Cancel" : "Comment"}
+      <button className="btn btn-primary m-2" onClick={() => setIsCommentModalOpen(true)}>
+        Comment
       </button>
 
-      {isDropdownOpen && (
-        <div className="reaction-dropdown">
-          <textarea
-            value={reactionText}
-            onChange={handleChange}
-            placeholder="Write your reaction..."
-            className="form-control"
-          />
-          <button className="btn btn-success mt-2" onClick={addReaction}>
-            Send
-          </button>
-        </div>
-      )}
+      <CommentModal
+        show={isCommentModalOpen}
+        handleClose={() => setIsCommentModalOpen(false)}
+        thought={thought}
+        handleComment={handleComment}
+        commentText={reactionText}
+        setCommentText={setReactionText}
+      />
     </>
   );
 }
