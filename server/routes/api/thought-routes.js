@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { getAll, getById, create, updateById, deleteById, getByUsername } = require("../../controllers/thought-controller");
+const { getAll, getById, create, updateById, deleteById, getByUsername, addReaction } = require("../../controllers/thought-controller");
 
 // GET all thoughts or thoughts by username
 router.get('/', async (req, res) => {
@@ -82,6 +82,17 @@ router.delete("/:id", async (req, res) => {
   try {
     const payload = await deleteById(req.params.id, req.body.username);
     res.status(200).json({ status: 'success', payload: payload });
+  } catch (err) {
+    res.status(500).json({ status: 'error', msg: err.message });
+  }
+});
+
+router.post('/:id/reactions', async (req, res) => {
+  try {
+    const thoughtId = req.params.id;
+    const reactionData = req.body;
+    const updatedThought = await addReaction(thoughtId, reactionData);
+    res.status(200).json({ status: 'success', payload: updatedThought });
   } catch (err) {
     res.status(500).json({ status: 'error', msg: err.message });
   }
