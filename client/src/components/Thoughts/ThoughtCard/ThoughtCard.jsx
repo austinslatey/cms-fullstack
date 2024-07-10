@@ -56,11 +56,13 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
     }
   };
 
-  const viewProfile = () => {
+  const viewProfile = (e) => {
+    e.stopPropagation();
     window.location.href = `/profile/${thought.user_id.username}`;
   };
 
-  const followUser = async () => {
+  const followUser = async (e) => {
+    e.stopPropagation();
     try {
       const response = await fetch(`/api/users/${currentUser.username}/follow`, {
         method: 'POST',
@@ -83,7 +85,8 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
     }
   };
 
-  const unfollowUser = async () => {
+  const unfollowUser = async (e) => {
+    e.stopPropagation();
     try {
       const response = await fetch(`/api/users/${currentUser.username}/unfollow`, {
         method: 'POST',
@@ -106,8 +109,30 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
     }
   };
 
+  const goToPostPage = (e) => {
+    const ignoredClasses = ["btn", "dropdown-item", "dropdown-toggle", "profile-avatar"];
+    const ignoredElements = ["BUTTON", "IMG"];
+    if (
+      ignoredClasses.some((cls) => e.target.classList.contains(cls)) ||
+      ignoredElements.includes(e.target.tagName)
+    ) {
+      return;
+    }
+    window.location.href = `/thought/${thought._id}`;
+  };
+
+  const handleUpdateClick = (e) => {
+    e.stopPropagation();
+    setShowUpdateModal(true);
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    onDelete(thought._id);
+  };
+
   return (
-    <div className="card bg-dark text-light my-2 container">
+    <div className="card bg-dark text-light my-2 container" onClick={goToPostPage}>
       <div className="row m-2 px-4 py-4 align-items-center">
         <div className="col-md-6 d-flex align-items-center">
           {avatarUrl ? (
@@ -140,8 +165,8 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
         {currentUser && currentUser.username === thought.user_id.username && (
           <div className="col-md-6 d-flex justify-content-end">
             <DropdownButton id="dropdown-basic-button" title="Options" variant="dark">
-              <Dropdown.Item className="btn btn-warning p-2 text-center bg-warning" onClick={() => setShowUpdateModal(true)}>Update</Dropdown.Item>
-              <Dropdown.Item className="btn btn-danger p-2 text-center bg-danger" onClick={() => onDelete(thought._id)}>Delete</Dropdown.Item>
+              <Dropdown.Item className="btn btn-warning p-2 text-center bg-warning" onClick={handleUpdateClick}>Update</Dropdown.Item>
+              <Dropdown.Item className="btn btn-danger p-2 text-center bg-danger" onClick={handleDeleteClick}>Delete</Dropdown.Item>
             </DropdownButton>
           </div>
         )}
@@ -150,9 +175,8 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
       <h1 className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtTitle}</h1>
       <p className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtText}</p>
       <p className="text-light text-center m-4">{thought.createdAt}</p>
-      <div className="d-flex justify-content-between align-items-center">
+      <div className="d-flex justify-content-between align-items-center" onClick={(e) => e.stopPropagation()}>
         <AddReaction thought={thought} />
-
         <button className="btn btn-primary">Like</button>
       </div>
       <UpdatePostModal
