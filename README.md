@@ -18,3 +18,14 @@ This application is a social media platform where users can create, view, and in
 - View user profiles and their posts.
 
 - Responsive design using Bootstrap.
+
+## Installation
+1. Clone the repository
+
+2. Install both front and backend dependencies using concurrenly
+
+- `npm install`
+
+3. Start the development server
+
+- `npm run develop`
