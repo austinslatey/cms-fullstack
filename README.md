@@ -8,48 +8,35 @@ This application is a social media platform where users can create, view, and in
 
 ## Features
 - User authentication and authorization using cookies.
-
 - Create, update, and delete posts.
-
 - Follow/unfollow users.
-
 - Add reactions to posts.
-
 - View user profiles and their posts.
-
 - Responsive design using Bootstrap.
+- Upload profile picture using `multer`
 
 ## Installation
 1. Clone the repository
-
 2. Install both front and backend dependencies using concurrenly
-
 - `npm install`
-
 3. Start the development server
-
 - `npm run develop`
 
 ## Usage 
 1. Ensure MongoDB is running on your system.
-
 2. Start the backend server and the frontend development server as described in the installation steps.
-
 3. Open your browser and navigate to http://localhost:3000
 
 ### User Authentication
 - Users can sign up and log in.
-
 - User sessions are managed using cookies.
 
 ### Creating and Managing Posts
 - Users can create new posts (thoughts) and view them on their profile page.
-
 - Only the user who created a post can update or delete it.
 
 ### Following Users
 - Users can follow other users.
-
 - The profile page shows followers and following lists.
 
 ### Adding Reactions
