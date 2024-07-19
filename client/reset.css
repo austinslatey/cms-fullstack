@@ -13,6 +13,11 @@
     line-height: 1;
     font-family: sans-serif;
   }
+
+  .bodycontent {
+    min-height: calc(100vh - 18rem);
+    background-color: rgb(31 41 55);
+  }
   
   h1,
   h2,
