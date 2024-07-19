@@ -2,7 +2,7 @@
 import React, { useState } from "react"
 import { Link } from "react-router-dom";
 import "./Signup.css";
-
+import homeImg from "../../../assets/home.png";
 
 
 export default function Signup() {
@@ -106,14 +106,14 @@ export default function Signup() {
                 <div className="signup-direct">
                   <h5 className="mt-5 mb-3 text-secondary">Already have an account?</h5>
                   <div>
-                    <Link to="/login" className="nav-link">
+                    <Link to="/login" className="nav-link bg-dark m-4">
                       Login Instead
                     </Link>
                   </div>
                 </div>
                 <div>
-                  <Link to="/" className="nav-link">
-                    Back To Home
+                <Link to="/" className="nav-link m-2">
+                    <img src={homeImg} alt="homepage" className="profile-avatar rounded"/>
                   </Link>
                 </div>
               </div>
