@@ -1,7 +1,7 @@
-// eslint-disable-next-line no-unused-vars
-import { useState } from "react"
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import "./Login.css"
+import "./Login.css";
+import homeImg from "../../../assets/home.png";
 
 
 export default function Login() {
@@ -102,14 +102,14 @@ export default function Login() {
                 <div className="signup-direct">
                   <h5 className="mt-5 mb-3 text-secondary">Need an account?</h5>
                   <div>
-                    <Link to="/signup" className="nav-link">
+                    <Link to="/signup" className="nav-link bg-dark m-4">
                       Sign up Instead
                     </Link>
                   </div>
                 </div>
                 <div>
-                  <Link to="/" className="nav-link">
-                    Back To Home
+                  <Link to="/" className="nav-link m-2">
+                    <img src={homeImg} alt="homepage" className="profile-avatar rounded"/>
                   </Link>
                 </div>
               </div>
