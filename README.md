@@ -17,7 +17,7 @@ This application is a social media platform where users can create, view, and in
 
 ## Installation
 1. Clone the repository
-2. Install both front and backend dependencies using concurrenly
+2. Install both front and backend dependencies in root directory using concurrenly by running the command
 - `npm install`
 3. Start the development server
 - `npm run develop`
