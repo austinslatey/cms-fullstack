@@ -1,4 +1,6 @@
-import { NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom";
+import homeImg from "../../assets/home.png";
+import '../Header/Header.css'
 
 import { useEffect, useState } from 'react'
 import { useAppContext } from "../../providers/AppProvider"
@@ -27,7 +29,7 @@ export default function Nav() {
       <NavLink className="navbar" to="/"
         style={({ isActive }) =>
         ({ textDecoration: isActive ? 'underline' : 'none' }
-        )}>Home</NavLink>
+        )}><img src={homeImg} alt="home" className="rounded nav-avatar"/></NavLink>
       <NavLink className="navbar" to="/about"
         style={({ isActive }) =>
         ({ textDecoration: isActive ? 'underline' : 'none' }
