@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import homeImg from "../../assets/home.png";
+import defaultImg from "../../assets/avi.png";
 import '../Header/Header.css'
 
 import { useEffect, useState } from 'react'
@@ -33,7 +34,7 @@ export default function Nav() {
       <NavLink className="navbar" to="/about"
         style={({ isActive }) =>
         ({ textDecoration: isActive ? 'underline' : 'none' }
-        )}>About</NavLink>
+        )}><img src={defaultImg} alt="avi" className="rounded nav-avatar"/></NavLink>
 
       {/* if else for displaying sign up/login tab */}
       {(!loggedIn) ? (
