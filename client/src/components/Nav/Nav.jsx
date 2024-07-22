@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { Buffer } from 'buffer';
 import homeImg from "../../assets/home.png";
 import defaultImg from "../../assets/avi.png";
+import settingsImg from "../../assets/settings.png"
 import '../Header/Header.css'
 
 import { useEffect, useState } from 'react';
@@ -60,7 +61,7 @@ export default function Nav({ avatar = {} }) {
       ) : (
         <>
           <NavLink className="navbar" to="/usersettings" style={({ isActive }) => ({ textDecoration: isActive ? 'underline' : 'none' })}>
-            Your Account
+          <img src={settingsImg} alt="settings" className="rounded nav-avatar" />
           </NavLink>
           <span className="logout" onClick={logout}>Logout</span>
         </>
