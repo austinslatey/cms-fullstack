@@ -1,13 +1,13 @@
-import React from "react"
 import Nav from '../Nav/Nav'
 import './Header.css'
+import { useAppContext } from "../../providers/AppProvider";
 
 
 export default function Header() {
-
-    return (
-        <header>
-            <Nav />
-        </header>
-    )
+  const { currentUser } = useAppContext();
+  return (
+    <header>
+      <Nav avatar={currentUser?.avatar || {}} />
+    </header>
+  )
 }
