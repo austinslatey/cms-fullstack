@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { getAll, getById, create, updateById, deleteById, getByUsername, addReaction } = require("../../controllers/thought-controller");
+const { getAll, getById, create, updateById, deleteById, getByUsername, addReaction, likeThought, unlikeThought } = require("../../controllers/thought-controller");
 
 // GET all thoughts or thoughts by username
 router.get('/', async (req, res) => {
@@ -97,5 +97,8 @@ router.post('/:id/reactions', async (req, res) => {
     res.status(500).json({ status: 'error', msg: err.message });
   }
 });
+
+router.post('/:id/like', likeThought);
+router.post('/:id/unlike', unlikeThought);
 
 module.exports = router;
