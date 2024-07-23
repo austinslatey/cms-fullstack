@@ -134,4 +134,69 @@ module.exports = {
       throw new Error(err.message);
     }
   },
+  likeThought: async function (req, res) {
+    try {
+      const thought = await Thought.findById(req.params.id);
+      if (!thought) {
+        return res.status(404).json({ status: 'error', msg: 'Thought not found' });
+      }
+
+      const user = await User.findOne({ username: req.body.username });
+      if (!user) {
+        return res.status(404).json({ status: 'error', msg: 'User not found' });
+      }
+
+      if (thought.likedBy.includes(user._id)) {
+        return res.status(400).json({ status: 'error', msg: 'You already liked this thought' });
+      }
+
+      thought.likes += 1;
+      thought.likedBy.push(user._id);
+      await thought.save();
+
+      const populatedThought = await Thought.findById(req.params.id)
+        .populate('user_id', 'username avatar bio')
+        .populate('reactions.user_id', 'username avatar')
+        .populate('likedBy', 'username avatar');
+
+      res.status(200).json({ status: 'success', msg: 'Thought liked', thought: populatedThought });
+    } catch (error) {
+      console.error('Like error:', error);
+      res.status(500).json({ status: 'error', msg: 'Internal server error' });
+    }
+  },
+  unlikeThought: async function (req, res) {
+    try {
+      const thought = await Thought.findById(req.params.id);
+      if (!thought) {
+        return res.status(404).json({ status: 'error', msg: 'Thought not found' });
+      }
+
+      const user = await User.findOne({ username: req.body.username });
+      if (!user) {
+        return res.status(404).json({ status: 'error', msg: 'User not found' });
+      }
+
+      const likeIndex = thought.likedBy.indexOf(user._id);
+      if (likeIndex === -1) {
+        return res.status(400).json({ status: 'error', msg: 'You have not liked this thought' });
+      }
+
+      thought.likes -= 1;
+      thought.likedBy.splice(likeIndex, 1);
+      await thought.save();
+
+      const populatedThought = await Thought.findById(req.params.id)
+        .populate('user_id', 'username avatar bio')
+        .populate('reactions.user_id', 'username avatar')
+        .populate('likedBy', 'username avatar');
+
+      res.status(200).json({ status: 'success', msg: 'Thought unliked', thought: populatedThought });
+    } catch (error) {
+      console.error('Unlike error:', error);
+      res.status(500).json({ status: 'error', msg: 'Internal server error' });
+    }
+  },
+
+
 };
