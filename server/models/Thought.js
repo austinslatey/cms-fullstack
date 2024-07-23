@@ -26,8 +26,19 @@ const thoughtSchema = new Schema(
       ref: 'User',
       required: true
     },
-    reactions: [reactionSchema]
+    reactions: [reactionSchema],
+    likes: {
+      type: Number,
+      default: 0,
+    },
+    likedBy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
+
   {
     toJSON: {
       getters: true
