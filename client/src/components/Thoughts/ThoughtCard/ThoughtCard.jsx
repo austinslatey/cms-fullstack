@@ -4,6 +4,7 @@ import { Buffer } from 'buffer';
 import UpdatePostModal from "../../Modal/UpdatePostModal";
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 import AddReaction from "../../Reactions/Reactions";
+import Likes from "../../Likes/Likes";
 import defaultImg from "../../../assets/avi.png";
 import "./ThoughtCard.css";
 
@@ -177,7 +178,7 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
       <p className="text-light text-center m-4">{thought.createdAt}</p>
       <div className="d-flex justify-content-between align-items-center" onClick={(e) => e.stopPropagation()}>
         <AddReaction thought={thought} />
-        <button className="btn btn-primary">Like</button>
+        <Likes thought={thought} currentUser={currentUser} />
       </div>
       <UpdatePostModal
         show={showUpdateModal}
