@@ -177,7 +177,7 @@ export default function ThoughtCard({ thought, onUpdate, onDelete }) {
       <p className="border border-secondary m-2 p-4 rounded text-center">{thought.thoughtText}</p>
       <p className="text-light text-center m-4">{thought.createdAt}</p>
       <div className="d-flex justify-content-between align-items-center" onClick={(e) => e.stopPropagation()}>
-        <AddReaction thought={thought} />
+        <AddReaction thought={thought}/>
         <Likes thought={thought} currentUser={currentUser} />
       </div>
       <UpdatePostModal
