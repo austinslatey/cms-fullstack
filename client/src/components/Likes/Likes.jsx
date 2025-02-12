@@ -14,7 +14,7 @@ const Likes = ({ thought }) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username: currentUser.username})
+        body: JSON.stringify({ username: currentUser.username })
       });
 
       if (!response.ok) {
@@ -36,7 +36,7 @@ const Likes = ({ thought }) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username: currentUser.username})
+        body: JSON.stringify({ username: currentUser.username })
       });
 
       if (!response.ok) {
@@ -52,14 +52,17 @@ const Likes = ({ thought }) => {
   };
 
   return (
-    <div>
+    <>
       {liked ? (
-        <button onClick={handleUnlike}>Unlike</button>
+        <button onClick={handleUnlike} className='btn btn-primary'>Unlike</button>
       ) : (
-        <button onClick={handleLike}>Like</button>
+        <button onClick={handleLike} className='btn btn-primary'>Like</button>
       )}
-      <span>{likes} {likes === 1 ? 'Like' : 'Likes'}</span>
-    </div>
+      <div>
+        <span className='border mx-2 p-1 rounded'>{likes}</span>
+      </div>
+
+    </>
   );
 };
 
